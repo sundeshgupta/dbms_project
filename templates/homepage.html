@@ -1,14 +1,88 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login Page</title>
+<style>
 
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/loginpage.css') }}">
-</head>
-    <body>
-        {% if session_user_name %}
-                    <p>Hello <b>{{ session_user_name }}</b></p>
-        {% endif %}
-        <a href="{{ url_for('logout') }}">Logout</a>
-    </body>
-</html>
+.courseid {
+  background-color: white;
+  color: red;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.allcourses
+{
+	background-color: green;
+    color:white;
+}
+
+.allcourses:hover, .dropbtn:focus {
+  background-color: white;
+  color:grey;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.coursedrop {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.coursedrop a {
+  color: blue;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.courseid a:hover {background-color: #ddd;}
+
+.show {display: block;}
+</style>
+
+
+
+
+
+
+<div class="header" align="right">
+	<a href=" ">My Profile</a> <a href=" ">Logout</a>
+	<hr size=2>
+</div>
+
+<div class="courseid">
+	<button onclick="referjs()" align="center" class="allcourses">Courses</button>
+	<div id="CourseAll" class="coursedrop">
+		<a href=" ">CS101</a>
+		<a href=" ">CS103</a>
+		<a href=" ">CS107</a>
+	</div>
+</div>
+
+<script>
+function referjs() {
+  document.getElementById("CourseAll").classList.toggle("show");
+}
+window.onclick = function(event) {
+  if (!event.target.matches('.allcourses')) {
+    var dropdowns = document.getElementsByClassName("coursedrop");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+</script>
+
+
+
