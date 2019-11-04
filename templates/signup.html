@@ -8,6 +8,10 @@
     <div class="">
         <form class="" action="{{url_for('signup')}}" method="post">
 
+            <div class="form-label-group">
+                <input type="name" id="inputName" name = "inputName" class="form-control" placeholder="Name*" required autofocus>
+                <label for="inputName">Full Name</label>
+            </div>
 
             <div class="form-label-group">
                 <input type="email" id="inputEmail" name = "inputEmail" class="form-control" placeholder="Email Address*" required autofocus>
@@ -35,11 +39,23 @@
             </div>
 
             <div class="form-label-group">
-                <input type="tel" id="inputPhonenumber2" name = "inputPhonenumber" class="form-control" placeholder="Phone Number 2">
+                <input type="tel" id="inputPhonenumber2" name = "inputPhonenumber2" class="form-control" placeholder="Phone Number 2">
                 <label for="inputPhonenumber2">Phone Number 2</label>
             </div>
 
+            {% if error %}
+                {% for element in error %}
+                    <p class=error><strong>Error:</strong> {{ element }}
+                    <br>
+                {% endfor %}
+            {% endif %}
+            <br>
             <button class="" type="submit">Sign Up</button>
+
+            {% if success %}
+                <p class=error><strong>success:</strong> {{ success }}
+                <br>
+            {% endif %}
         </form>
         <a href = "/form">Already Have an Account? Login Here.</a>
     </div>
