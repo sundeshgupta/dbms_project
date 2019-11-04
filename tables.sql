@@ -9,16 +9,16 @@ CREATE TABLE User
 CREATE TABLE PhoneNoDetails
 (
 	Email VARCHAR(50), 
-	Phone_no INT,
+	Phone_no VARCHAR(10),
 	PRIMARY KEY (Email, Phone_no),
 	FOREIGN KEY (Email) REFERENCES User(Email)
 );
 
 CREATE TABLE Login
 (
-	Email INT,
+	Email VARCHAR(50),
 	Password VARCHAR(25),
-	Username VARCHAR(10),
+	Username VARCHAR(25),
 	PRIMARY KEY (Email, Password, Username),
 	FOREIGN KEY (Email) REFERENCES User(Email)
 );
@@ -50,7 +50,7 @@ CREATE TABLE Rating
 
 CREATE TABLE ViewsOrManages
 (
-	Email INT,
+	Email VARCHAR(50),
 	Article_id INT,
 	PRIMARY KEY (Article_id),
 	FOREIGN KEY (Email) REFERENCES User(Email),
