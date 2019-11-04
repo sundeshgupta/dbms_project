@@ -4,26 +4,137 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 
-  .courseid {
-  border-color:black;
-  border-width:medium;
-  background-color: white;
-  color: red;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
+#menu {
+  background: #343434;
+  color: #eee;
+  height: 35px;
+  border-bottom: 4px solid #eeeded
 }
 
-.allcourses
-{
-  background-color: green;
-    color:white;
+#menu ul,
+#menu li {
+  margin: 0 0;
+  padding: 0 0;
+  list-style: none
 }
 
-.allcourses:hover, .dropbtn:focus {
-  background-color: white;
-  color:grey;
+#menu ul {
+  height: 35px
+}
+
+#menu li {
+  float: left;
+  display: inline;
+  position: relative;
+  font: bold 12px Arial;
+  text-shadow: 0 -1px 0 #000;
+  border-right: 1px solid #444;
+  border-left: 1px solid #111;
+  text-transform: uppercase
+}
+
+#menu li:first-child {
+  border-left: none
+}
+
+#menu a {
+  display: block;
+  line-height: 35px;
+  padding: 0 14px;
+  text-decoration: none;
+  color: #eee;
+}
+
+#menu li:hover > a,
+#menu li a:hover {
+  background: #111
+}
+
+#menu input {
+  display: none;
+  margin: 0 0;
+  padding: 0 0;
+  width: 80px;
+  height: 35px;
+  opacity: 0;
+  cursor: pointer
+}
+
+#menu label {
+  font: bold 30px Arial;
+  display: none;
+  width: 35px;
+  height: 36px;
+  line-height: 36px;
+  text-align: center
+}
+
+#menu label span {
+  font-size: 12px;
+  position: absolute;
+  left: 35px
+}
+
+#menu ul.menus {
+  height: auto;
+  width: 180px;
+  background: #111;
+  position: absolute;
+  z-index: 99;
+  display: none;
+  border: 0;
+}
+
+#menu ul.menus li {
+  display: block;
+  width: 100%;
+  font: 12px Arial;
+  text-transform: none;
+}
+
+#menu li:hover ul.menus {
+  display: block
+}
+
+#menu a.home {
+  background: #c00;
+}
+
+#menu a.prett {
+  padding: 0 27px 0 14px
+}
+
+#menu a.prett::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-width: 6px 5px;
+  border-style: solid;
+  border-color: #eee transparent transparent transparent;
+  position: absolute;
+  top: 15px;
+  right: 9px
+}
+
+#menu ul.menus a:hover {
+  background: #333;
+}
+
+#menu ul.menus .submenu {
+  display: none;
+  position: absolute;
+  left: 180px;
+  background: #111;
+  top: 0;
+  width: 180px;
+}
+
+#menu ul.menus .submenu li {
+  background: #111;
+}
+
+#menu ul.menus .has-submenu:hover .submenu {
+  display: block;
 }
 
 .dropdown {
@@ -31,62 +142,73 @@
   display: inline-block;
 }
 
-.coursedrop {
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  overflow: auto;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.coursedrop a {
-  color: blue;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.courseid a:hover {background-color: #ddd;}
-
 .show {display: block;}
+
+input[type=text] {
+  width: 130px;
+  -webkit-transition: width 0.4s ease-in-out;
+  transition: width 0.4s ease-in-out;
+}
+
+input[type=text]:focus {
+  width: 100%;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: red;
+  opacity: 1; /* Firefox */
+}
+
 </style>
 </head>
 <body>
 
-<h2>IITI Code Management</h2>
+<h2 align="center">IITI Code Management</h2>
 
 <div class="header" align="right">
-	<a href=" ">My Profile</a> <a href="{{ url_for('logout') }}">Logout</a>
-	<hr size=2>
+  <a href=" ">My Profile</a> <a href="{{ url_for('logout') }}"> Logout</a>
+  <hr size=2>
 </div>
 
-<div class="courseid">
-  <button onclick="referjs()" align="center" class="allcourses">Courses</button>
-  <div id="CourseAll" class="coursedrop">
-    <a href=" ">CS101</a>
-    <a href=" ">CS103</a>
-    <a href=" ">CS107</a>
-  </div>
-</div>
+<nav>
+  <ul id='menu'>
+    <li><a class='prett' href='#'>Courses</a>
+      <ul class='menus'>
+          <li> <a href='#' title="Course SubMenu">CS101</a></li>
+            <li> <a href='#' title="Course SubMenu">CS103</a></li>
+            <li> <a href='#' title="Course SubMenu">CS107</a></li>
+        </ul>
+    </li>
+    <li><a class='prett' href='#' title='Menu'>Tags</a>
+      <ul class='menus'>
+        <li class='has-submenu'><a class='prett' href='Dropdown 1' title='Dropdown 1'>Category 1</a>
+          <ul class='submenu'>
+            <li><a href="#" title="Sub Menu">Tag11</a></li>
+            <li><a href="#" title="Sub Menu">Tag12</a></li>
+            <li><a href="#" title="Sub Menu">Tag13</a></li>
+          </ul>
+        </li>
+        <li class='has-submenu'><a class='prett' href='Dropdown 1' title='Dropdown 2'>Category 2</a>
+          <ul class='submenu'>
+            <li><a href="#" title="Sub Menu">Tag21</a></li>
+            <li><a href="#" title="Sub Menu">Tag22</a></li>
+            <li><a href="#" title="Sub Menu">Tag23</a></li>
+          </ul>
+        </li>
+        <li class='has-submenu'><a class='prett' href='Dropdown 1' title='Dropdown 3'>Category 3</a>
+          <ul class='submenu'>
+            <li><a href="#" title="Sub Menu">Tag31</a></li>
+            <li><a href="#" title="Sub Menu">Tag32</a></li>
+            <li><a href="#" title="Sub Menu">Tag33</a></li>
+          </ul>
+        </li>
+        
+      </ul>
+    </li>
+  </ul>
+  
+</nav>
+<input type="text" placeholder="Search.." style = "color:white;">
 
-<script>
-function referjs() {
-  document.getElementById("CourseAll").classList.toggle("show");
-}
-window.onclick = function(event) {
-  if (!event.target.matches('.allcourses')) {
-    var dropdowns = document.getElementsByClassName("coursedrop");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-}
-</script>
 </body>
 </html>
