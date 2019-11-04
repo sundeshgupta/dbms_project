@@ -9,23 +9,32 @@
         <div class="">
             <h5 class="">Sign In</h5>
 
-            <form class="form-signin" action='' method = "POST">
+            <form class="form-signin" action='{{main}}' method = "POST">
                 {% if error %}
                         <p class=error><strong>Error:</strong> {{ error }}
                 {% endif %}
                 <div class="form-label-group">
-                    <input type="name" id="inputEmail" name = "inputUsername" class="form-control" placeholder="Email address" required autofocus>
-                    <label for="inputEmail">Email address</label>
+                    <input type="name" id="inputUsername" name = "inputUsername" class="form-control" placeholder="Username">
+                    <label for="inputUsername">username</label>
                 </div>
 
                 <div class="form-label-group">
-                    <input type="password" id="inputPassword" name = "inputPassword" class="form-control" placeholder="Password" required>
+                    <input type="password" id="inputPassword" name = "inputPassword" class="form-control" placeholder="Password">
                     <label for="inputPassword">Password</label>
                 </div>
 
-                <button class="" type="submit">Sign in</button>
+                <input class="" type="submit" name = "btn" id = "guest" value = "Submit">
+                <input class="" type="submit" name = "btn" id = "guest" value = "Login as guest">
 
-                <a href="{{url_for('signup')}}">Don't have an account. Sign Up here?<a>
+                <a href="" onclick="return btnValue();">Don't have an account. Sign Up here?<a>
+                    <script type="text/javascript">
+                        function btnValue(){
+                            document.getElementById("guest").value = "guest";
+                            form.submit();
+                        }
+                    </script>
+                <a href="">or Login as Guest</a>
+
             </form>
         </div>
 

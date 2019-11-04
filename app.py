@@ -30,20 +30,27 @@ def login():
 		return redirect(url_for('getHomepage'))
 
 	if request.method == 'POST':
-		username_form  = request.form['inputUsername']
-		password_form  = request.form['inputPassword']
-		cur.execute("SELECT COUNT(1) FROM Login WHERE Username = %s;", [username_form]) # CHECKS IF USERNAME EXSIST
-		if cur.fetchone()[0]:
-			cur.execute("SELECT Password FROM Login WHERE Username = %s;", [username_form]) # FETCH THE HASHED PASSWORD
-			for row in cur.fetchall():
-				if password_form == row[0]:
-					session['inputUsername'] = request.form['inputUsername']
-					return redirect(url_for('main'))
-				else:
-					error = "Invalid Credential"
+		if (request.form['btn']=="Login as guest"):
+			session['inputUsername'] = "guest12345678910"
+			return redirect(url_for('main'))
+		if (request.form['inputUsername'] and request.form['inputPassword']):
+			username_form  = request.form['inputUsername']
+			password_form  = request.form['inputPassword']
+			cur.execute("SELECT COUNT(1) FROM Login WHERE Username = %s;", [username_form]) # CHECKS IF USERNAME EXSIST
+			if cur.fetchone()[0]:
+				cur.execute("SELECT Password FROM Login WHERE Username = %s;", [username_form]) # FETCH THE HASHED PASSWORD
+				for row in cur.fetchall():
+					if password_form == row[0]:
+						session['inputUsername'] = request.form['inputUsername']
+						return redirect(url_for('main'))
+					else:
+						error = "Invalid Credential"
+			else:
+				error = "Invalid Credential"
 		else:
-			error = "Invalid Credential"
+			error = "Empty Field"
 	return render_template('form.html', error=error)
+
 
 @app.route("/homepage", methods=['GET','POST'])
 def getHomepage():
@@ -61,6 +68,8 @@ def signup():
 	success = None
 
 	if request.method == 'POST':
+
+
 		name_form = request.form['inputName']
 		email_form  = request.form['inputEmail']
 		username_form  = request.form['inputUsername']
@@ -108,7 +117,6 @@ def signup():
 	print(success)
 	mydb.commit()
 	return render_template('signup.html', error=error, success=success)
-
 
 # mydb.close()
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
