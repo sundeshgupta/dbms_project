@@ -54,5 +54,25 @@ def logout():
     session.pop('inputUsername', None)
     return redirect(url_for('main'))
 
+@app.route("/signup", methods = ['GET', 'POST'])
+def signup():
+
+	error = []
+
+	if request.method == 'POST':
+		email_form  = request.form['inputEmail']
+		username_form  = request.form['inputUsername']
+		password_form  = request.form['inputPassword']
+		password2_form  = request.form['inputPassword2']
+		phonenumber1_form  = request.form['inputPhonenumber1']
+		ponenumber2_form  = request.form['inputPhonenumber2']
+
+		if password_form!=password2_form:
+			error.append("Passwords do not match")
+
+	return render_template(('signup.html'))
+
+
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+
 app.run(debug=True)

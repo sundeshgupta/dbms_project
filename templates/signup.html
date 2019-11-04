@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<head>
+
+</head>
+    <title>Signup Page</title>
+<body>
+    <div class="">
+        <form class="" action="{{url_for('signup')}}" method="post">
+
+
+            <div class="form-label-group">
+                <input type="email" id="inputEmail" name = "inputEmail" class="form-control" placeholder="Email Address*" required autofocus>
+                <label for="inputEmail">Email address</label>
+            </div>
+
+            <div class="form-label-group">
+                <input type="name" id="inputUsername" name = "inputUsername" class="form-control" placeholder="Username*" required>
+                <label for="inputUsername">Username</label>
+            </div>
+
+            <div class="form-label-group">
+                <input type="password" id="inputPassword" name = "inputPassword" class="form-control" placeholder="Password*" required>
+                <label for="inputPassword">New Password</label>
+            </div>
+
+            <div class="form-label-group">
+                <input type="password" id="inputPassword2" name = "inputPassword2" class="form-control" placeholder="Re-enter Password*" required>
+                <label for="inputPassword2">Re-enter Password</label>
+            </div>
+
+            <div class="form-label-group">
+                <input type="tel" id="inputPhonenumber1" name = "inputPhonenumber1" class="form-control" placeholder="Phone Number 1*" required>
+                <label for="inputPhonenumber1">Phone Number 1</label>
+            </div>
+
+            <div class="form-label-group">
+                <input type="tel" id="inputPhonenumber2" name = "inputPhonenumber" class="form-control" placeholder="Phone Number 2">
+                <label for="inputPhonenumber2">Phone Number 2</label>
+            </div>
+
+            <button class="" type="submit">Sign Up</button>
+        </form>
+        <a href = "/form">Already Have an Account? Login Here.</a>
+    </div>
+</body>
