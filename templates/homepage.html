@@ -1,6 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 
-.courseid {
+  .courseid {
+  border-color:black;
+  border-width:medium;
   background-color: white;
   color: red;
   padding: 16px;
@@ -11,7 +17,7 @@
 
 .allcourses
 {
-	background-color: green;
+  background-color: green;
     color:white;
 }
 
@@ -46,24 +52,22 @@
 
 .show {display: block;}
 </style>
+</head>
+<body>
 
-
-
-
-
+<h2>IITI Code Management</h2>
 
 <div class="header" align="right">
-	<a href=" ">My Profile</a> <a href="{{ url_for('logout') }}">Logout</a>
-	<hr size=2>
+  <a href=" ">My Profile</a> <a href=" ">Logout</a>
 </div>
 
 <div class="courseid">
-	<button onclick="referjs()" align="center" class="allcourses">Courses</button>
-	<div id="CourseAll" class="coursedrop">
-		<a href=" ">CS101</a>
-		<a href=" ">CS103</a>
-		<a href=" ">CS107</a>
-	</div>
+  <button onclick="referjs()" align="center" class="allcourses">Courses</button>
+  <div id="CourseAll" class="coursedrop">
+    <a href=" ">CS101</a>
+    <a href=" ">CS103</a>
+    <a href=" ">CS107</a>
+  </div>
 </div>
 
 <script>
@@ -83,3 +87,6 @@ window.onclick = function(event) {
   }
 }
 </script>
+
+</body>
+</html>
