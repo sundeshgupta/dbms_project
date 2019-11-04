@@ -58,7 +58,8 @@
 <h2>IITI Code Management</h2>
 
 <div class="header" align="right">
-  <a href=" ">My Profile</a> <a href=" ">Logout</a>
+	<a href=" ">My Profile</a> <a href="{{ url_for('logout') }}">Logout</a>
+	<hr size=2>
 </div>
 
 <div class="courseid">
@@ -87,6 +88,5 @@ window.onclick = function(event) {
   }
 }
 </script>
-
 </body>
 </html>
