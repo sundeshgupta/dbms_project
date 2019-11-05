@@ -110,3 +110,9 @@ CREATE TABLE CommentFor
 	FOREIGN KEY (Comment_id) REFERENCES Comment(Comment_id),
 	FOREIGN KEY (CommentFor_id) REFERENCES Comment(Comment_id)
 );
+DELIMITER $$
+CREATE PROCEDURE get_user_data(usersname varchar(255))
+BEGIN
+SELECT PhoneNoDetails.Phone_no,T.Email_add,T.uname from PhoneNoDetails inner join (SELECT Login.Email as Email_add,User.Name as uname from Login inner join User on User.Email=Login.Email where Login.Username=usersname) T on Email_add=Email;
+END$$
+DELIMITER ;	
