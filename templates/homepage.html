@@ -10,6 +10,12 @@
   <hr size=2>
 </div>
 
+{% if myprofile_guest %}
+    <script type="text/javascript">
+            alert("{{myprofile_guest}}");
+    </script>
+{% endif %}
+
 <form class="" action="" method="post">
     <select>
       <option value="" selected>Course</option>
@@ -35,7 +41,6 @@
     <input type="submit">
 </form>
 
-<input type="text" placeholder="Search.." style = "color:white;">
 
 
 

@@ -33,7 +33,9 @@ def login():
 		if (request.form['btn']=="Login as guest"):
 			session['inputUsername'] = "guest12345678910"
 			return redirect(url_for('main'))
-		if (request.form['inputUsername'] and request.form['inputPassword']):
+		elif (request.form['inputUsername'] and request.form['inputPassword']):
+			print(request.form['inputUsername'])
+			print(request.form['inputPassword'])
 			username_form  = request.form['inputUsername']
 			password_form  = request.form['inputPassword']
 			cur.execute("SELECT COUNT(1) FROM Login WHERE Username = %s;", [username_form]) # CHECKS IF USERNAME EXSIST
@@ -120,6 +122,8 @@ def signup():
 
 @app.route('/myprofile',methods=['GET','POST'])
 def myprofile():
+	if (session['inputUsername'])=="guest12345678910":
+		return render_template('homepage.html', myprofile_guest = "My Profile not available for guest user!")
 	args=(session['inputUsername'],)
 	cur.callproc('get_user_data',args)
 	uname=session['inputUsername']
