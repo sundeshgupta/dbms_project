@@ -34,7 +34,6 @@ def myprofile():
 	for res in cur.stored_results():
 		result = res.fetchall()
 	for row in result:
-		print(i)
 		if i==1:
 			phnno2=row[0]
 		email=row[1]
@@ -43,7 +42,6 @@ def myprofile():
 			phnno1=row[0]
 		i=i+1	
 	return render_template('myprofile.html',uname=uname,name=name,email=email,phnno1=phnno1,phnno2=phnno2)
-
 
 @app.route("/form", methods=['GET','POST'])
 def login():
