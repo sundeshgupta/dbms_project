@@ -118,6 +118,30 @@ def signup():
 	mydb.commit()
 	return render_template('signup.html', error=error, success=success)
 
+@app.route('/myprofile',methods=['GET','POST'])
+def myprofile():
+	args=(session['inputUsername'],)
+	cur.callproc('get_user_data',args)
+	uname=session['inputUsername']
+	name="1"
+	email="s"
+	phnno1=1
+	phnno2="Not available"
+	i=0
+	for res in cur.stored_results():
+		result = res.fetchall()
+	for row in result:
+		if i==1:
+			phnno2=row[0]
+		email=row[1]
+		name=row[2]
+		if i==0:
+			phnno1=row[0]
+		i=i+1
+	return render_template('myprofile.html',uname=uname,name=name,email=email,phnno1=phnno1,phnno2=phnno2)
+
+
+
 # mydb.close()
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 

@@ -40,7 +40,7 @@ def myprofile():
 		name=row[2]
 		if i==0:
 			phnno1=row[0]
-		i=i+1	
+		i=i+1
 	return render_template('myprofile.html',uname=uname,name=name,email=email,phnno1=phnno1,phnno2=phnno2)
 
 @app.route("/form", methods=['GET','POST'])
