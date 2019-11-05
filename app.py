@@ -17,7 +17,7 @@ cur = mydb.cursor()
 @app.route('/')
 def main():
 	if 'inputUsername' in session:
-		username_session = escape(session['inputUsername']).capitalize()
+		username_session = escape(session['inputUsername'])
 		return render_template('homepage.html', session_user_name=username_session)
 	return redirect(url_for('login'))
 
