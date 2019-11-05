@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add Artile</title>
+    </head>
+    <body>
+        <h2 align="center">IITI Code Management</h2>
+
+        <div class="header" align="right">
+          <a href="{{url_for('addArticle')}}">Add Article</a>
+          <a href="{{url_for('myprofile')}}">My Profile</a>
+          <a href="{{ url_for('logout') }}"> Logout</a>
+          <hr size=2>
+        </div>
+        <form class="" action="" method="post">
+            <input type="text" name="inputTitle" placeholder="Title" required>
+            <br><br>
+            <select class="" name="">
+                <option value="">Select Course</option>
+                <option value="">Not available</option>
+                <option value="">CS101</option>
+                <option value="">CS102</option>
+                <option value="">CS103</option>
+            </select>
+            <br><br>
+            <textarea name="inputCode" rows="20" cols="20" placeholder="Enter Your Code Here" required></textarea>
+            <br>
+            <input type="submit" name="submitCode" value="Add Code">
+        </form>
+    </body>
+</html>

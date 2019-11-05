@@ -6,6 +6,7 @@ from io import BytesIO
 import numpy as np
 import mysql.connector
 PEOPLE_FOLDER='/home/sundesh/Desktop/dbms_project/'
+GUEST = "guest12345678910"
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER']=PEOPLE_FOLDER
 
@@ -31,7 +32,7 @@ def login():
 
 	if request.method == 'POST':
 		if (request.form['btn']=="Login as guest"):
-			session['inputUsername'] = "guest12345678910"
+			session['inputUsername'] = GUEST
 			return redirect(url_for('main'))
 		elif (request.form['inputUsername'] and request.form['inputPassword']):
 			print(request.form['inputUsername'])
@@ -122,8 +123,8 @@ def signup():
 
 @app.route('/myprofile',methods=['GET','POST'])
 def myprofile():
-	if (session['inputUsername'])=="guest12345678910":
-		return render_template('homepage.html', myprofile_guest = "My Profile not available for guest user!")
+	if (session['inputUsername'])==GUEST:
+		return render_template('homepage.html', myprofile_guest = "This feature is not available for guest user!")
 	args=(session['inputUsername'],)
 	cur.callproc('get_user_data',args)
 	uname=session['inputUsername']
@@ -144,7 +145,15 @@ def myprofile():
 		i=i+1
 	return render_template('myprofile.html',uname=uname,name=name,email=email,phnno1=phnno1,phnno2=phnno2)
 
+@app.route("/addArticle.html", methods = ['GET', 'POST'])
+def addArticle():
+	if (session['inputUsername'])==GUEST:
+		return render_template('homepage.html', myprofile_guest = "This feature is not available for guest user!")
 
+	if request.method == 'POST':
+		print('as')
+
+	return render_template('addArticle.html')
 
 # mydb.close()
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
