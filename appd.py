@@ -23,28 +23,26 @@ def main():
 
 @app.route('/myprofile',methods=['GET','POST'])
 def myprofile():
-	print(session['inputUsername'])
-	args=[session['inputUsername']]
-	query="SELECT PhoneNoDetails.Phone_no,T.Email_add,T.uname from PhoneNoDetails inner join (SELECT Login.Email as Email_add,User.Name as uname from Login inner join User on User.Email=Login.Email where Login.Username=\"args[0]\") T on Email_add=Email;"
-	cur.execute(query)
-	#cur.callproc('get_user_data',args)
-	name=1
-	email=1
+	args=(session['inputUsername'],)
+	cur.callproc('get_user_data',args)
+	uname=session['inputUsername']
+	name="1"
+	email="s"
 	phnno1=1
 	phnno2="Not available"
 	i=0
-	data=cur.fetchall()
-	for row in data:
-		print(row[0])
+	for res in cur.stored_results():
+		result = res.fetchall()
+	for row in result:
+		print(i)
 		if i==1:
-			phnno2=row[2]
-		name=row[0]
+			phnno2=row[0]
 		email=row[1]
+		name=row[2]
 		if i==0:
-			phnno1=row[2]
+			phnno1=row[0]
 		i=i+1	
-
-	return render_template('myprofile.html',name=name,email=email,phnno1=phnno1,phnno2=phnno2)
+	return render_template('myprofile.html',uname=uname,name=name,email=email,phnno1=phnno1,phnno2=phnno2)
 
 
 @app.route("/form", methods=['GET','POST'])
@@ -110,7 +108,7 @@ def signup():
 		cur.execute("SELECT COUNT(1) FROM Login WHERE Email = %s;", [email_form]) # CHECKS IF USERNAME EXSIST
 
 		if cur.fetchone()[0]:
-			error.append("Email already exists")
+			error.append("Email alre	ady exists")
 			flag = 1
 
 		if phonenumber2_form is not None:
