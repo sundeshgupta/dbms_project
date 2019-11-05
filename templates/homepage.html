@@ -18,29 +18,30 @@
     </script>
 {% endif %}
 
-<form class="" action="" method="post">
-    <select>
+<form class="" action=" {{url_for('filterCourse')}} " method="post">
+    <select name="course_selected">
       <option value="" selected>Course</option>
-      <option>CS101</option>
-      <option>CS102</option>
-      <option>CS103</option>
+      <option value="CS101">CS101</option>
+      <option value="CS102">CS102</option>
+      <option value="CS103">CS103</option>
     </select>
-    <input type="submit">
+    <input type="submit" value="Filter">
 </form>
 
 <form action="" method="post">
     <select data-placeholder="Begin typing a name to filter..." multiple class="chosen-select" name="test">
-      <option value=""></option>
-      <option>tag1</option>
-      <option>tag2</option>
-      <option>tag3</option>
-      <option>tag4</option>
-      <option>tag5</option>
-      <option>tag6</option>
-      <option>tag7</option>
-      <option>tag8</option>
+      <option value="select_tags"></option>
+      <option value="c++">C++</option>
+      <option value="html">Html</option>
+      <option value="python">Python</option>
+      <option value="algorithms">Algorithms</option>
+      <option value="DS">Data Structures</option>
+      <option values="math">Math</option>
+      <option values="OS">Operating System</option>
+      <option values="sql">SQL</option>
+      <option values="ML">Machine Learning</option>
     </select>
-    <input type="submit">
+    <input type="submit" value="Filter">
 </form>
 
 
