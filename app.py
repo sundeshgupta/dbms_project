@@ -116,8 +116,6 @@ def signup():
 
 			success = "Signup successfull. Please go to login page."
 
-	print(error)
-	print(success)
 	mydb.commit()
 	return render_template('signup.html', error=error, success=success)
 
@@ -157,6 +155,28 @@ def filterCourse():
 
 	return render_template('CourseFilter.html',data=data,coursecode=coursecode,description=description)
 
+@app.route("/TagFilter",methods=['GET','POST'])
+def filterTag():
+	tags=request.form.getlist('tag_selected')
+
+	query="SELECT ArticlePage.Title from TaggedTopics inner join ArticlePage on ArticlePage.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( "
+
+	i=0
+	string = []
+	for tag in tags:
+		if i==len(tags)-1:
+			query = query + " %s "
+		else:
+			query = query + " %s, "
+		i=i+1
+		string.append(tag)
+	query = query + "));"
+	print(query)
+	print(string)
+	cur.execute(query,string)
+	data=cur.fetchall()
+
+	return render_template('TagFilter.html',data=data,number=number,tagsizezero = "This feature is not available for guest user!")
 
 @app.route("/addArticle.html", methods = ['GET', 'POST'])
 def addArticle():
@@ -166,13 +186,38 @@ def addArticle():
 	if request.method == 'POST':
 		inputTitle = request.form['inputTitle']
 		inputCourse = request.form['inputCourse']
-		inputTag = request.form['inputTag']
+		inputTag = request.form.getlist('inputTag')
 		inputCode = request.form['inputCode']
 
-		print(inputTitle)
-		print(inputCourse)
-		print(inputTag)
-		print(inputCode)
+		args = (session['inputUsername'], )
+		cur.callproc('get_email_from_username', args)
+		for res in cur.stored_results():
+			result = res.fetchall()
+		print(result)
+		cur.execute("INSERT INTO ArticlePage(Title, Creation_date, Contributor_email) VALUES (%s, %s, %s)", [inputTitle, "2019-01-01", result[0][0]])
+
+		cur.callproc('get_max_article_id')
+
+		for res in cur.stored_results():
+			inputArticle_id = res.fetchall()
+
+		if inputCourse is not "select_course":
+			cur.execute("INSERT INTO CourseMaterial VALUES (%s, %s)", [inputCourse, inputArticle_id[0][0]])
+
+		if inputTag is not "select_tags":
+			for tags in inputTag:
+
+				cur.callproc('get_tag_id_from_tag_name', (tags,))
+
+				for res in cur.stored_results():
+					inputTag_id = res.fetchall()
+
+				cur.execute("INSERT INTO TaggedTopics VALUES (%s, %s)", [inputTag_id[0][0], inputArticle_id[0][0]])
+
+
+		mydb.commit()
+		with open("./static/files/"+str(inputArticle_id[0][0])+".txt", "w") as text_file:
+			print(inputCode, file=text_file)
 
 	return render_template('addArticle.html')
 

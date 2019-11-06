@@ -127,11 +127,24 @@ DELETE FROM RATING WHERE Contributor_email=NEW.contributor_email;
 END$$
 
 CREATE TRIGGER After_Article_Insertion
-BEFORE INSERT ON ArticlePage
+AFTER INSERT ON ArticlePage
 FOR EACH ROW
 BEGIN
 INSERT INTO ViewsOrManages VALUES (NEW.contributor_email,NEW.article_id);
-SET NEW.Creation_date=CURDATE();
+END$$
+
+CREATE TRIGGER After_Article_Deletion
+BEFORE DELETE ON ArticlePage
+FOR EACH ROW
+BEGIN
+DELETE FROM ViewsOrManages WHERE ViewsOrManages.Article_id = OLD.Article_id;
+END$$
+
+CREATE TRIGGER After_Article_Insertion
+BEFORE INSERT ON ArticlePage
+FOR EACH ROW
+BEGIN
+SET NEW.Creation_date = CURDATE();
 END$$
 
 CREATE TRIGGER COMMENT_INSERT
@@ -140,4 +153,20 @@ FOR EACH ROW
 BEGIN
 SET NEW.Comment_date=CURDATE();
 END$$
+
+CREATE PROCEDURE get_email_from_username(uname varchar(25))
+BEGIN
+SELECT Email FROM Login where Login.Username=uname;
+END$$
+
+CREATE PROCEDURE get_max_article_id()
+BEGIN
+SELECT MAX(Article_id) FROM ArticlePage;
+END$$
+
+CREATE PROCEDURE get_tag_id_from_tag_name(tag_name varchar(25))
+BEGIN
+SELECT Tag_id FROM Tag where Name = tag_name;
+END$$
+
 DELIMITER ;

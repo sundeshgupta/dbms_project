@@ -21,12 +21,16 @@
           <a href="{{ url_for('logout') }}"> Logout</a>
           <hr size=2>
         </div>
-        <form class="" action="" method="post">
-            <input type="text" name="inputTitle" placeholder="Title" required>
+        <form class="" action="" method="post" onsubmit="alert_func()">
+            <script type="text/javascript">
+                function alert_func(){
+                    alert("Article successfully added!");
+                }
+            </script>
+            <input type="text" name="inputTitle" placeholder="Title*" required>
             <br><br>
             <select class="" name="inputCourse">
-                <option value="">Select Course</option>
-                <option value="">Not available</option>
+                <option value="select_course">Select Course</option>
                 <option value="CS203">CS203</option>
                 <option value="CS207">CS207</option>
                 <option value="CS204">CS204</option>
@@ -34,7 +38,7 @@
                 <option value="CS403">CS403</option>
             </select>
             <br><br>
-            <select data-placeholder="Add Tags" multiple class="chosen-select" name="inputTag">
+            <select data-placeholder="Add Tags*" multiple class="chosen-select" name="inputTag" required>
                 <option value="select_tags"></option>
                 <option value="c++">C++</option>
                 <option value="html">Html</option>
@@ -47,9 +51,9 @@
                 <option values="ML">Machine Learning</option>
             </select>
             <br><br>
-            <textarea name="inputCode" rows="1" cols="100" style="height:1em; width:200px;" placeholder="Enter Your Code Here" required></textarea>
+            <textarea name="inputCode" rows="1" cols="100" style="height:1em; width:200px;" placeholder="Enter Your Code Here*" required></textarea>
             <br>
-            <input type="submit" name="submitCode" value="Add Code">
+            <input type="submit" name="submitCode" value="Add Code" id="submitCode">
         </form>
         <br><br><br><br>
         <a href="{{url_for('getHomepage')}}">Back</a>
