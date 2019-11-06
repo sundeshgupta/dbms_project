@@ -6,6 +6,7 @@ from io import BytesIO
 import numpy as np
 import mysql.connector
 PEOPLE_FOLDER='/home/sundesh/Desktop/dbms_project/'
+GUEST = "guest12345678910"
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER']=PEOPLE_FOLDER
 
@@ -21,27 +22,6 @@ def main():
 		return render_template('homepage.html', session_user_name=username_session)
 	return redirect(url_for('login'))
 
-@app.route('/myprofile',methods=['GET','POST'])
-def myprofile():
-	args=(session['inputUsername'],)
-	cur.callproc('get_user_data',args)
-	uname=session['inputUsername']
-	name="1"
-	email="s"
-	phnno1=1
-	phnno2="Not available"
-	i=0
-	for res in cur.stored_results():
-		result = res.fetchall()
-	for row in result:
-		if i==1:
-			phnno2=row[0]
-		email=row[1]
-		name=row[2]
-		if i==0:
-			phnno1=row[0]
-		i=i+1
-	return render_template('myprofile.html',uname=uname,name=name,email=email,phnno1=phnno1,phnno2=phnno2)
 
 @app.route("/form", methods=['GET','POST'])
 def login():
@@ -51,20 +31,29 @@ def login():
 		return redirect(url_for('getHomepage'))
 
 	if request.method == 'POST':
-		username_form  = request.form['inputUsername']
-		password_form  = request.form['inputPassword']
-		cur.execute("SELECT COUNT(1) FROM Login WHERE Username = %s;", [username_form]) # CHECKS IF USERNAME EXSIST
-		if cur.fetchone()[0]:
-			cur.execute("SELECT Password FROM Login WHERE Username = %s;", [username_form]) # FETCH THE HASHED PASSWORD
-			for row in cur.fetchall():
-				if password_form == row[0]:
-					session['inputUsername'] = request.form['inputUsername']
-					return redirect(url_for('main'))
-				else:
-					error = "Invalid Credential"
+		if (request.form['btn']=="Login as guest"):
+			session['inputUsername'] = GUEST
+			return redirect(url_for('main'))
+		elif (request.form['inputUsername'] and request.form['inputPassword']):
+			print(request.form['inputUsername'])
+			print(request.form['inputPassword'])
+			username_form  = request.form['inputUsername']
+			password_form  = request.form['inputPassword']
+			cur.execute("SELECT COUNT(1) FROM Login WHERE Username = %s;", [username_form]) # CHECKS IF USERNAME EXSIST
+			if cur.fetchone()[0]:
+				cur.execute("SELECT Password FROM Login WHERE Username = %s;", [username_form]) # FETCH THE HASHED PASSWORD
+				for row in cur.fetchall():
+					if password_form == row[0]:
+						session['inputUsername'] = request.form['inputUsername']
+						return redirect(url_for('main'))
+					else:
+						error = "Invalid Credential"
+			else:
+				error = "Invalid Credential"
 		else:
-			error = "Invalid Credential"
+			error = "Empty Field"
 	return render_template('form.html', error=error)
+
 
 @app.route("/homepage", methods=['GET','POST'])
 def getHomepage():
@@ -82,6 +71,8 @@ def signup():
 	success = None
 
 	if request.method == 'POST':
+
+
 		name_form = request.form['inputName']
 		email_form  = request.form['inputEmail']
 		username_form  = request.form['inputUsername']
@@ -106,7 +97,7 @@ def signup():
 		cur.execute("SELECT COUNT(1) FROM Login WHERE Email = %s;", [email_form]) # CHECKS IF USERNAME EXSIST
 
 		if cur.fetchone()[0]:
-			error.append("Email alre	ady exists")
+			error.append("Email already exists")
 			flag = 1
 
 		if phonenumber2_form is not None:
@@ -129,6 +120,54 @@ def signup():
 	print(success)
 	mydb.commit()
 	return render_template('signup.html', error=error, success=success)
+
+@app.route('/myprofile',methods=['GET','POST'])
+def myprofile():
+	if (session['inputUsername'])==GUEST:
+		return render_template('homepage.html', myprofile_guest = "This feature is not available for guest user!")
+	args=(session['inputUsername'],)
+	cur.callproc('get_user_data',args)
+	uname=session['inputUsername']
+	name="1"
+	email="s"
+	phnno1=1
+	phnno2="Not available"
+	i=0
+	for res in cur.stored_results():
+		result = res.fetchall()
+	for row in result:
+		if i==1:
+			phnno2=row[0]
+		email=row[1]
+		name=row[2]
+		if i==0:
+			phnno1=row[0]
+		i=i+1
+	return render_template('myprofile.html',uname=uname,name=name,email=email,phnno1=phnno1,phnno2=phnno2)
+
+@app.route("/addArticle.html", methods = ['GET', 'POST'])
+def addArticle():
+	if (session['inputUsername'])==GUEST:
+		return render_template('homepage.html', myprofile_guest = "This feature is not available for guest user!")
+
+	if request.method == 'POST':
+		print('as')
+
+	return render_template('addArticle.html')
+
+@app.route("/homepage",methods=['GET','POST'])
+def filterCourse():
+	coursecode=request.form['course_selected']
+	query="SELECT CourseMaterial.Article_id,ArticlePage.Title,ArticlePage.Creation_date from CourseMaterial inner join ArticlePage on ArticlePage.Article_id=CourseMaterial.Article_id where Course_code=%s;"
+	cur.execute(query,[coursecode])
+	data=cur.fetchall()
+	cur.execute("select Description from Course where Course_code=%s",[coursecode])
+	description=cur.fetchall()
+
+	return render_template('CourseFilter.html',data=data,coursecode=coursecode,description=description)
+
+
+
 
 
 # mydb.close()
