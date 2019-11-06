@@ -19,7 +19,7 @@
 {% endif %}
 
 <form class="" action=" {{url_for('filterCourse')}} " method="post">
-    <select name="course_selected">
+    <select name="course_selected" required>
       <option value="" selected>Course</option>
       <option value="CS203">CS203</option>
       <option value="CS204">CS204</option>
@@ -31,7 +31,7 @@
 </form>
 
 <form action="{{ url_for('filterTag') }}" method="post">
-    <select data-placeholder="Begin typing a name to filter..." multiple class="chosen-select" name="tag_selected" id="tag_selected">
+    <select data-placeholder="Begin typing a name to filter..." multiple class="chosen-select" name="tag_selected" id="tag_selected" required>
       <option value="select_tags"></option>
       <option value="c++">C++</option>
       <option value="html">Html</option>

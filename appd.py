@@ -161,21 +161,24 @@ def filterCourse():
 def filterTag():
 	tags=request.form.getlist('tag_selected')
 
-	for tag in tags:
-		tag = "\""+tag+"\""
-
-	query="SELECT ArticlePage.Title from TaggedTopics inner join ArticlePage on ArticlePage.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in %s);"
-	# tags = ["sdf", "het"]
-	tags_comma = ','.join(tags)
-
-	data = None
-
-	print(tags_comma)
+	query="SELECT ArticlePage.Title from TaggedTopics inner join ArticlePage on ArticlePage.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( " 
 	
-	if (len(tags)):
-		cur.execute(query,[str(tags_comma)])
-		data=cur.fetchall()
-	return render_template('TagFilter.html',data=data)
+	i=0
+	string = []
+	for tag in tags:
+		if i==len(tags)-1:
+			query = query + " %s "
+		else:
+			query = query + " %s, "
+		i=i+1
+		string.append(tag)
+	query = query + "));"
+	print(query)
+	print(string)
+	cur.execute(query,string)
+	data=cur.fetchall()
+
+	return render_template('TagFilter.html',data=data,number=number,tagsizezero = "This feature is not available for guest user!")
 
 @app.route("/addArticle.html", methods = ['GET', 'POST'])
 def addArticle():

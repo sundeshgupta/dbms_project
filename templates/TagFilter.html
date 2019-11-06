@@ -4,6 +4,12 @@
 </head>
 <body>
 
+{% if number==0 %}
+			<script type="text/javascript">
+            alert("{{tagsizezero}}");
+    		</script>
+    	{% endif%}
+
 <h2 align="center">IITI Code Management</h2>
 <div class="header" align="right">
   <a href="{{url_for('myprofile')}}">My Profile</a> <a href="{{ url_for('logout') }}"> Logout</a>
@@ -16,11 +22,13 @@
 
 <div class="tagfiltermain" align="left">
 	<ul>
-		{% if data %}
-			{% for row in data %}
-				<li>{{ row[0] }} </li>
-			{% endfor %}
-		{% endif %}
+		{% if number!=0 %}
+			{% if data %}
+				{% for row in data %}
+					<li>{{ row[0] }} </li>
+				{% endfor %}
+			{% endif %}
+		{%endif%}
 	</ul>
 
 
