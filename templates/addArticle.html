@@ -3,6 +3,15 @@
     <head>
         <title>Add Artile</title>
     </head>
+    <style media="screen">
+    textarea {
+        border: 0 none white;
+        overflow: hidden;
+        padding: 0;
+        outline: none;
+        background-color: #D0D0D0;
+    }
+    </style>
     <body>
         <h2 align="center">IITI Code Management</h2>
 
@@ -18,14 +27,38 @@
             <select class="" name="">
                 <option value="">Select Course</option>
                 <option value="">Not available</option>
-                <option value="">CS101</option>
-                <option value="">CS102</option>
-                <option value="">CS103</option>
+                <option value="CS203">CS203</option>
+                <option value="CS207">CS207</option>
+                <option value="CS204">CS204</option>
+                <option value="CS303">CS303</option>
+                <option value="CS403">CS403</option>
             </select>
             <br><br>
-            <textarea name="inputCode" rows="20" cols="20" placeholder="Enter Your Code Here" required></textarea>
+            <select data-placeholder="Add Tags" multiple class="chosen-select" name="test">
+                <option value="select_tags"></option>
+                <option value="c++">C++</option>
+                <option value="html">Html</option>
+                <option value="python">Python</option>
+                <option value="algorithms">Algorithms</option>
+                <option value="DS">Data Structures</option>
+                <option values="math">Math</option>
+                <option values="OS">Operating System</option>
+                <option values="sql">SQL</option>
+                <option values="ML">Machine Learning</option>
+            </select>
+            <br><br>
+            <textarea name="inputCode" rows="1" cols="100" style="height:1em; width:200px;" placeholder="Enter Your Code Here" required></textarea>
             <br>
             <input type="submit" name="submitCode" value="Add Code">
         </form>
+        <br><br><br><br>
+        <a href="{{url_for('getHomepage')}}">Back</a>
+
+        <script type="text/javascript" src="{{ url_for('static',filename='script/jquery-3.2.1.min.js') }}"></script>
+        <link type="text/css" href="{{ url_for('static',filename='styles/chosen.css') }}" rel="stylesheet"/>
+        <script type="text/javascript" src="{{ url_for('static',filename='script/chosen.jquery.min.js') }}"></script>
+        <script src="{{ url_for('static',filename='script/homepage.js') }}"></script>
+        <script src="{{ url_for('static',filename='script/addArticle.js') }}"></script>
+
     </body>
 </html>
