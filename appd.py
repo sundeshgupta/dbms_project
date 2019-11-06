@@ -145,15 +145,6 @@ def myprofile():
 		i=i+1
 	return render_template('myprofile.html',uname=uname,name=name,email=email,phnno1=phnno1,phnno2=phnno2)
 
-@app.route("/addArticle.html", methods = ['GET', 'POST'])
-def addArticle():
-	if (session['inputUsername'])==GUEST:
-		return render_template('homepage.html', myprofile_guest = "This feature is not available for guest user!")
-
-	if request.method == 'POST':
-		print('as')
-
-	return render_template('addArticle.html')
 
 @app.route("/CourseFilter",methods=['GET','POST'])
 def filterCourse():
@@ -166,9 +157,43 @@ def filterCourse():
 
 	return render_template('CourseFilter.html',data=data,coursecode=coursecode,description=description)
 
+@app.route("/TagFilter",methods=['GET','POST'])
+def filterTag():
+	tags=request.form.getlist('tag_selected')
 
+	for tag in tags:
+		tag = "\""+tag+"\""
 
+	query="SELECT ArticlePage.Title from TaggedTopics inner join ArticlePage on ArticlePage.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in %s);"
+	# tags = ["sdf", "het"]
+	tags_comma = ','.join(tags)
 
+	data = None
+
+	print(tags_comma)
+	
+	if (len(tags)):
+		cur.execute(query,[str(tags_comma)])
+		data=cur.fetchall()
+	return render_template('TagFilter.html',data=data)
+
+@app.route("/addArticle.html", methods = ['GET', 'POST'])
+def addArticle():
+	if (session['inputUsername'])==GUEST:
+		return render_template('homepage.html', myprofile_guest = "This feature is not available for guest user!")
+
+	if request.method == 'POST':
+		inputTitle = request.form['inputTitle']
+		inputCourse = request.form['inputCourse']
+		inputTag = request.form['inputTag']
+		inputCode = request.form['inputCode']
+
+		print(inputTitle)
+		print(inputCourse)
+		print(inputTag)
+		print(inputCode)
+
+	return render_template('addArticle.html')
 
 # mydb.close()
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

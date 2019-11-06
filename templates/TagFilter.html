@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<h2 align="center">IITI Code Management</h2>
+<div class="header" align="right">
+  <a href="{{url_for('myprofile')}}">My Profile</a> <a href="{{ url_for('logout') }}"> Logout</a>
+  <hr size=2>
+</div>
+
+<div class="tagfiltertop" align="center">
+		The articles have been filtered according to your choice
+</div>
+
+<div class="tagfiltermain" align="left">
+	<ul>
+		{% if data %}
+			{% for row in data %}
+				<li>{{ row[0] }} </li>
+			{% endfor %}
+		{% endif %}
+	</ul>
+
+
+</body>

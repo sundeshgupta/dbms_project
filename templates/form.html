@@ -23,12 +23,18 @@
                     <label for="inputPassword">Password</label>
                 </div>
 
-                <input class="" type="submit" name = "btn" id = "guest" value = "Sign In">
+                <input class="" type="submit" name = "btn" id = "guest" value = "Submit">
                 <input class="" type="submit" name = "btn" id = "guest" value = "Login as guest">
 
-                <a href="{{url_for('signup')}}">Don't have an account. Sign Up here?<a>
+                <a href="" onclick="retunr btnValue();">Don't have an account. Sign Up here?<a>
+                    <script type="text/javascript">
+                        function btnValue(){
+                            document.getElementById("guest").value = "guest";
+                            form.submit();
+                        }
+                    </script>
+                <a href="">or Login as Guest</a>
 
-                br<a href="">Administrative Login</a>
             </form>
         </div>
 

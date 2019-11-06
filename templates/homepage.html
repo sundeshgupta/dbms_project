@@ -30,8 +30,8 @@
     <input type="submit" value="Filter">
 </form>
 
-<form action="" method="post">
-    <select data-placeholder="Begin typing a name to filter..." multiple class="chosen-select" name="test">
+<form action="{{ url_for('filterTag') }}" method="post">
+    <select data-placeholder="Begin typing a name to filter..." multiple class="chosen-select" name="tag_selected" id="tag_selected">
       <option value="select_tags"></option>
       <option value="c++">C++</option>
       <option value="html">Html</option>
