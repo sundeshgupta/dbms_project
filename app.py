@@ -145,13 +145,34 @@ def myprofile():
 		i=i+1
 	return render_template('myprofile.html',uname=uname,name=name,email=email,phnno1=phnno1,phnno2=phnno2)
 
+
+@app.route("/CourseFilter",methods=['GET','POST'])
+def filterCourse():
+	coursecode=request.form['course_selected']
+	query="SELECT ArticlePage.Title from CourseMaterial inner join ArticlePage on ArticlePage.Article_id=CourseMaterial.Article_id where Course_code=%s;"
+	cur.execute(query,[coursecode])
+	data=cur.fetchall()
+	cur.execute("select Description from Course where Course_code=%s",[coursecode])
+	description=cur.fetchall()
+
+	return render_template('CourseFilter.html',data=data,coursecode=coursecode,description=description)
+
+
 @app.route("/addArticle.html", methods = ['GET', 'POST'])
 def addArticle():
 	if (session['inputUsername'])==GUEST:
 		return render_template('homepage.html', myprofile_guest = "This feature is not available for guest user!")
 
 	if request.method == 'POST':
-		print('as')
+		inputTitle = request.form['inputTitle']
+		inputCourse = request.form['inputCourse']
+		inputTag = request.form['inputTag']
+		inputCode = request.form['inputCode']
+
+		print(inputTitle)
+		print(inputCourse)
+		print(inputTag)
+		print(inputCode)
 
 	return render_template('addArticle.html')
 
