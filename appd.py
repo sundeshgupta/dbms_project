@@ -155,10 +155,9 @@ def addArticle():
 
 	return render_template('addArticle.html')
 
-@app.route("/homepage",methods=['GET','POST'])
+@app.route("/CourseFilter",methods=['GET','POST'])
 def filterCourse():
 	coursecode=request.form['course_selected']
-	print coursecode
 	query="SELECT ArticlePage.Title from CourseMaterial inner join ArticlePage on ArticlePage.Article_id=CourseMaterial.Article_id where Course_code=%s;"
 	cur.execute(query,[coursecode])
 	data=cur.fetchall()
