@@ -8,7 +8,7 @@ CREATE TABLE User
 
 CREATE TABLE PhoneNoDetails
 (
-	Email VARCHAR(50), 
+	Email VARCHAR(50),
 	Phone_no VARCHAR(10),
 	PRIMARY KEY (Email, Phone_no),
 	FOREIGN KEY (Email) REFERENCES User(Email)
@@ -69,7 +69,7 @@ CREATE TABLE TaggedTopics
 
 CREATE TABLE Course
 (
-	Course_code INT,
+	Course_code VARCHAR(10),
 	Description VARCHAR(255),
 	Course_name VARCHAR(50),
 	PRIMARY KEY (Course_code)
@@ -77,7 +77,7 @@ CREATE TABLE Course
 
 CREATE TABLE CourseMaterial
 (
-	Course_code INT,
+	Course_code VARCHAR(10),
 	Article_id INT,
 	PRIMARY KEY (Article_id),
 	FOREIGN KEY (Course_code) REFERENCES Course(Course_code),
@@ -117,7 +117,7 @@ DELIMITER $$
 CREATE PROCEDURE get_user_data(usersname varchar(25))
 BEGIN
 SELECT PhoneNoDetails.Phone_no,T.Email_add,T.uname from PhoneNoDetails inner join (SELECT Login.Email as Email_add,User.Name as uname from Login inner join User on User.Email=Login.Email where Login.Username=usersname) T on Email_add=Email;
-END$$	
+END$$
 
 CREATE TRIGGER RATING_UPDATE
 BEFORE INSERT ON Rating
