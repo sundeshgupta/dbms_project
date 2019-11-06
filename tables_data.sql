@@ -19,6 +19,7 @@ INSERT INTO Tag(Name) VALUES ("c++"),
 							 ("algorithms"),
 							 ("DS"),
 							 ("math"),
+							 ("OS"),
 							 ("sql");
 
 INSERT INTO Course VALUES ("CS203","This course introduces you to some common data structures and algorithms used in programming","Data Structures and Algorithms"),
