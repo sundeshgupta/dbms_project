@@ -24,13 +24,16 @@
 
 		<div class="tagfiltermain" align="left">
 			<ul>
-				{% if number!=0 %}
-					{% if data %}
-						{% for row in data %}
-							<li>{{ row[0] }} </li>
-						{% endfor %}
-					{% endif %}
-				{%endif%}
+				<form class="" action="{{url_for('viewArticle')}}" method="post">
+					{% if number!=0 %}
+						{% if data %}
+							{% for row in data %}
+								<li>{{ row[0] }} </li>
+								<input type="submit" name="inputArticleTitle" value="{{row[1]}}">
+							{% endfor %}
+						{% endif %}
+					{%endif%}
+				</form>
 			</ul>
 		<div>
 

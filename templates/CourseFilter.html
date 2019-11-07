@@ -18,11 +18,14 @@
         </div>
 
         <div class="coursefiltermain" align="left">
-        	<ul>
-        		{% for row in data %}
-        			<li>{{ row[0] }} </li>
-        		{% endfor %}
-        	</ul>
+            <form class="" action="{{url_for('viewArticle')}}" method="post">
+                <ul>
+                    {% for row in data %}
+                    <li>{{ row[0] }} </li>
+                        <input type="submit" name="inputArticleTitle" value="{{row[1]}}">
+                    {% endfor %}
+                </ul>
+            </form>
         <div>
 
         <a href="{{url_for('getHomepage')}}">Back</a>

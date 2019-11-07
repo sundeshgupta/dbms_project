@@ -147,7 +147,7 @@ def myprofile():
 @app.route("/CourseFilter",methods=['GET','POST'])
 def filterCourse():
 	coursecode=request.form['course_selected']
-	query="SELECT ArticlePage.Title from CourseMaterial inner join ArticlePage on ArticlePage.Article_id=CourseMaterial.Article_id where Course_code=%s;"
+	query="SELECT ArticlePage.Title, ArticlePage.Article_id from CourseMaterial inner join ArticlePage on ArticlePage.Article_id=CourseMaterial.Article_id where Course_code=%s;"
 	cur.execute(query,[coursecode])
 	data=cur.fetchall()
 	cur.execute("select Description from Course where Course_code=%s",[coursecode])
@@ -224,6 +224,17 @@ def addArticle():
 		return redirect(url_for('addArticle'))
 
 	return render_template('addArticle.html')
+
+@app.route("/viewArticle.html",methods=['GET','POST'])
+def viewArticle():
+	data = None
+	if request.method == 'POST':
+		inputArticle_id = request.form['inputArticleTitle']
+		with open ("./static/files/"+str(inputArticle_id)+".txt", "r") as text_file:
+			data = text_file.read()
+
+	return render_template('viewArticle.html', data = data)
+
 
 # mydb.close()
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
