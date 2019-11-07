@@ -126,7 +126,7 @@ BEGIN
 DELETE FROM RATING WHERE Contributor_email=NEW.contributor_email;
 END$$
 
-CREATE TRIGGER After_Article_Insertion
+CREATE TRIGGER After_Article_Insertion_ViewsOrManages
 AFTER INSERT ON ArticlePage
 FOR EACH ROW
 BEGIN
@@ -140,7 +140,7 @@ BEGIN
 DELETE FROM ViewsOrManages WHERE ViewsOrManages.Article_id = OLD.Article_id;
 END$$
 
-CREATE TRIGGER After_Article_Insertion
+CREATE TRIGGER After_Article_Insertion_DATE
 BEFORE INSERT ON ArticlePage
 FOR EACH ROW
 BEGIN

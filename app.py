@@ -176,7 +176,7 @@ def filterTag():
 	cur.execute(query,string)
 	data=cur.fetchall()
 
-	return render_template('TagFilter.html',data=data,number=number,tagsizezero = "This feature is not available for guest user!")
+	return render_template('TagFilter.html',data=data,tagsizezero = "This feature is not available for guest user!")
 
 @app.route("/addArticle.html", methods = ['GET', 'POST'])
 def addArticle():
