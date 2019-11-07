@@ -153,7 +153,7 @@ def filterCourse():
 	cur.execute("select Description from Course where Course_code=%s",[coursecode])
 	description=cur.fetchall()
 
-	return render_template('CourseFilter.html',data=data,coursecode=coursecode,description=description)
+	return render_template('CourseFilter.html',data=data,coursecode=coursecode,description=description[0][0])
 
 @app.route("/TagFilter",methods=['GET','POST'])
 def filterTag():
