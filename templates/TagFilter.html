@@ -1,35 +1,40 @@
 <!DOCTYPE html>
 <html>
-<head>
-</head>
-<body>
+	<head>
+	</head>
+	<body>
 
-{% if number==0 %}
+		{% if number==0 %}
 			<script type="text/javascript">
             alert("{{tagsizezero}}");
     		</script>
-    	{% endif%}
+		{% endif%}
 
-<h2 align="center">IITI Code Management</h2>
-<div class="header" align="right">
-  <a href="{{url_for('myprofile')}}">My Profile</a> <a href="{{ url_for('logout') }}"> Logout</a>
-  <hr size=2>
-</div>
+		<h2 align="center">IITI Code Management</h2>
+		<div class="header" align="right">
+			<a href="{{url_for('addArticle')}}">Add Article</a>
+			<a href="{{url_for('myprofile')}}">My Profile</a>
+			<a href="{{ url_for('logout') }}"> Logout</a>
+		<hr size=2>
+		</div>
 
-<div class="tagfiltertop" align="center">
-		The articles have been filtered according to your choice
-</div>
+		<div class="tagfiltertop" align="center">
+				The articles have been filtered according to your choice
+		</div>
 
-<div class="tagfiltermain" align="left">
-	<ul>
-		{% if number!=0 %}
-			{% if data %}
-				{% for row in data %}
-					<li>{{ row[0] }} </li>
-				{% endfor %}
-			{% endif %}
-		{%endif%}
-	</ul>
+		<div class="tagfiltermain" align="left">
+			<ul>
+				{% if number!=0 %}
+					{% if data %}
+						{% for row in data %}
+							<li>{{ row[0] }} </li>
+						{% endfor %}
+					{% endif %}
+				{%endif%}
+			</ul>
+		<div>
 
+		<a href="{{url_for('getHomepage')}}">Back</a>
 
-</body>
+	</body>
+</html>

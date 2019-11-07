@@ -21,7 +21,7 @@
           <a href="{{ url_for('logout') }}"> Logout</a>
           <hr size=2>
         </div>
-        <form class="" action="" method="post" onsubmit="alert_func()">
+        <form class="" action="{{url_for('addArticle')}}" method="POST" onsubmit="alert_func()">
             <script type="text/javascript">
                 function alert_func(){
                     alert("Article successfully added!");
@@ -45,10 +45,10 @@
                 <option value="python">Python</option>
                 <option value="algorithms">Algorithms</option>
                 <option value="DS">Data Structures</option>
-                <option values="math">Math</option>
-                <option values="OS">Operating System</option>
-                <option values="sql">SQL</option>
-                <option values="ML">Machine Learning</option>
+                <option value="math">Math</option>
+                <option value="OS">Operating System</option>
+                <option value="sql">SQL</option>
+                <option value="ML">Machine Learning</option>
             </select>
             <br><br>
             <textarea name="inputCode" rows="1" cols="100" style="height:1em; width:200px;" placeholder="Enter Your Code Here*" required></textarea>

@@ -159,7 +159,7 @@ def filterCourse():
 def filterTag():
 	tags=request.form.getlist('tag_selected')
 
-	query="SELECT ArticlePage.Title from TaggedTopics inner join ArticlePage on ArticlePage.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( "
+	query="SELECT ArticlePage.Title,ArticlePage.Article_id,count(distinct TaggedTopics.Tag_id) C from TaggedTopics inner join ArticlePage on ArticlePage.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( "
 
 	i=0
 	string = []
@@ -170,13 +170,14 @@ def filterTag():
 			query = query + " %s, "
 		i=i+1
 		string.append(tag)
-	query = query + "));"
+	query = query + ")) GROUP BY ArticlePage.Article_id HAVING C="+str(len(tags))+" ;"
 	print(query)
 	print(string)
 	cur.execute(query,string)
 	data=cur.fetchall()
 
 	return render_template('TagFilter.html',data=data,tagsizezero = "This feature is not available for guest user!")
+
 
 @app.route("/addArticle.html", methods = ['GET', 'POST'])
 def addArticle():
@@ -212,12 +213,15 @@ def addArticle():
 				for res in cur.stored_results():
 					inputTag_id = res.fetchall()
 
+				print(tags, inputTag_id)
+
 				cur.execute("INSERT INTO TaggedTopics VALUES (%s, %s)", [inputTag_id[0][0], inputArticle_id[0][0]])
-
-
-		mydb.commit()
+		if inputTitle:
+			mydb.commit()
 		with open("./static/files/"+str(inputArticle_id[0][0])+".txt", "w") as text_file:
 			print(inputCode, file=text_file)
+
+		return redirect(url_for('addArticle'))
 
 	return render_template('addArticle.html')
 

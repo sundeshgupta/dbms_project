@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html>
-<head>
-</head>
-<body>
+    <head>
+    </head>
+    <body>
 
-<h2 align="center">IITI Code Management</h2>
-<div class="header" align="right">
-  <a href="{{url_for('myprofile')}}">My Profile</a> <a href="{{ url_for('logout') }}"> Logout</a>
-  <hr size=2>
-</div>
+        <h2 align="center">IITI Code Management</h2>
+        <div class="header" align="right">
+            <a href="{{url_for('addArticle')}}">Add Article</a>
+            <a href="{{url_for('myprofile')}}">My Profile</a>
+            <a href="{{ url_for('logout') }}"> Logout</a>
+            <hr size=2>
+        </div>
 
-<div class="coursefiltertop" align="center">
-	{{coursecode}} <br>
-	{{description}} <br>
-</div>
+        <div class="coursefiltertop" align="center">
+        	{{coursecode}} <br>
+        	{{description}} <br>
+        </div>
 
-<div class="coursefiltermain" align="left">
-	<ul>
-		{% for row in data %}
-			<li>{{ row[0] }} </li>
-		{% endfor %}
-	</ul>
+        <div class="coursefiltermain" align="left">
+        	<ul>
+        		{% for row in data %}
+        			<li>{{ row[0] }} </li>
+        		{% endfor %}
+        	</ul>
+        <div>
+
+        <a href="{{url_for('getHomepage')}}">Back</a>
 
 
-</body>
+
+    </body>
+</html>
