@@ -236,6 +236,22 @@ def viewArticle():
 	return render_template('viewArticle.html', data = data)
 
 
+@app.route("/myArticleFilter.html",methods=['GET','POST'])
+def myArticleFilter():
+
+	args = (session['inputUsername'], )
+	cur.callproc('get_email_from_username', args)
+	for res in cur.stored_results():
+		inputEmail = res.fetchall()
+	inputEmail = inputEmail[0][0]
+	query="SELECT ArticlePage.Title, ArticlePage.Article_id from ArticlePage where Contributor_email = %s"
+	cur.execute(query,[inputEmail])
+	data=cur.fetchall()
+	print(data)
+	print(session['inputUsername'])
+	return render_template('myArticleFilter.html',data=data,inputUsername=session['inputUsername'])
+
+
 # mydb.close()
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 

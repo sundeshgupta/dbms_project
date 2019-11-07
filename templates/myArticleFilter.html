@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+
+        <h2 align="center">IITI Code Management</h2>
+        <div class="header" align="right">
+            <a href="{{url_for('addArticle')}}">Add Article</a>
+            <a href="{{url_for('myprofile')}}">My Profile</a>
+            <a href="{{ url_for('logout') }}"> Logout</a>
+            <hr size=2>
+        </div>
+
+        <div class="" align="center">
+        	{{inputUsername}} <br>
+        </div>
+
+        <div class="" align="left">
+            <form class="" action="{{url_for('viewArticle')}}" method="post">
+                <ul>
+                    {% for row in data %}
+                    <li>{{ row[0] }} </li>
+                        <input type="submit" name="inputArticleTitle" value="{{row[1]}}">
+                    {% endfor %}
+                </ul>
+            </form>
+        <div>
+
+        <a href="{{url_for('myprofile')}}">Back</a>
+
+
+
+    </body>
+</html>
