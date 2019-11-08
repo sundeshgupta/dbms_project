@@ -18,17 +18,20 @@
                 {% if data %}
                     {{data}}
                 {% else %}
-                    <p><b>Error Reading Data from File!</b></p>
+                    Error Reading Data from File!
                 {%endif%}
             </code></pre>
          <!-- </textarea> -->
-    <br>
-    <a href="{{url_for('getHomepage')}}">Back</a>
+        <br>
+        <a href="{{url_for('getHomepage')}}">Back</a>
+        
+        <form class="" action=" {{url_for(viewArticle)}} " method="post">
+            <input type="image" src="likebutton.png" name="actionrating" value="like">{{rating}}<input type="image" src="dislikebutton.jpeg" name="action" value="dislike">
+        </form>
 
+        <link type="text/css" href="{{ url_for('static',filename='styles/monokai.css') }}" rel="stylesheet"/>
+        <script type="text/javascript" src="{{url_for('static', filename = 'script/rainbow-custom.min.js')}}">
 
-    <link type="text/css" href="{{ url_for('static',filename='styles/monokai.css') }}" rel="stylesheet"/>
-    <script type="text/javascript" src="{{url_for('static', filename = 'script/rainbow-custom.min.js')}}">
-
-    </script>
+        </script>        
     </body>
 </html>

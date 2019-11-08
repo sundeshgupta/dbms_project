@@ -147,13 +147,13 @@ def myprofile():
 @app.route("/CourseFilter",methods=['GET','POST'])
 def filterCourse():
 	coursecode=request.form['course_selected']
-	query="SELECT ArticlePage.Title from CourseMaterial inner join ArticlePage on ArticlePage.Article_id=CourseMaterial.Article_id where Course_code=%s;"
+	query="SELECT ArticlePage.Title, ArticlePage.Article_id from CourseMaterial inner join ArticlePage on ArticlePage.Article_id=CourseMaterial.Article_id where Course_code=%s;"
 	cur.execute(query,[coursecode])
 	data=cur.fetchall()
 	cur.execute("select Description from Course where Course_code=%s",[coursecode])
 	description=cur.fetchall()
 
-	return render_template('CourseFilter.html',data=data,coursecode=coursecode,description=description)
+	return render_template('CourseFilter.html',data=data,coursecode=coursecode,description=description[0][0])
 
 @app.route("/TagFilter",methods=['GET','POST'])
 def filterTag():
@@ -178,6 +178,7 @@ def filterTag():
 
 	return render_template('TagFilter.html',data=data,tagsizezero = "This feature is not available for guest user!")
 
+
 @app.route("/addArticle.html", methods = ['GET', 'POST'])
 def addArticle():
 	if (session['inputUsername'])==GUEST:
@@ -200,11 +201,11 @@ def addArticle():
 
 		for res in cur.stored_results():
 			inputArticle_id = res.fetchall()
-
-		if inputCourse is not "select_course":
+		print(inputCourse)
+		if inputCourse!="select_course":
 			cur.execute("INSERT INTO CourseMaterial VALUES (%s, %s)", [inputCourse, inputArticle_id[0][0]])
 
-		if inputTag is not "select_tags":
+		if inputTag!="select_tags":
 			for tags in inputTag:
 
 				cur.callproc('get_tag_id_from_tag_name', (tags,))
@@ -212,14 +213,66 @@ def addArticle():
 				for res in cur.stored_results():
 					inputTag_id = res.fetchall()
 
+				print(tags, inputTag_id)
+
 				cur.execute("INSERT INTO TaggedTopics VALUES (%s, %s)", [inputTag_id[0][0], inputArticle_id[0][0]])
-
-
-		mydb.commit()
+		if inputTitle:
+			mydb.commit()
 		with open("./static/files/"+str(inputArticle_id[0][0])+".txt", "w") as text_file:
 			print(inputCode, file=text_file)
 
+		return redirect(url_for('addArticle'))
+
 	return render_template('addArticle.html')
+
+
+
+@app.route("/viewArticle.html",methods=['GET','POST'])
+def viewArticle():
+	data = None
+	if request.method == 'POST':
+		inputArticle_id = request.form['inputArticleTitle']
+		with open ("./static/files/"+str(inputArticle_id)+".txt", "r") as text_file:
+			data = text_file.read()
+
+	rating = None
+	print(inputArticle_id)
+	#print(request.form['actionrating'])
+	query="SELECT Weight from Rating where Article_id='%s; "
+	cur.execute(query,[inputArticle_id])
+	rating=cur.fetchone()
+	cur.fetchall()
+	args = (session['inputUsername'], )
+	cur.callproc('get_email_from_username', args)
+	for res in cur.stored_results():
+		inputEmail = res.fetchall()
+	inputEmail = inputEmail[0][0]
+	cur.fetchall()
+	if request.form('action')=='like':
+		rating=rating+1
+		query="ALTER TABLE Rating; Insert into Rating VALUES (inputArticle_id,rating,inputEmail);"
+		cur.execute(query)
+	if request.form('action')=='dislike':
+		rating=rating-1
+		query="ALTER TABLE Rating; Insert into Rating VALUES (inputArticle_id,rating,inputEmail);"
+
+	return render_template('viewArticle.html', data = data,rating=rating)
+
+
+@app.route("/myArticleFilter.html",methods=['GET','POST'])
+def myArticleFilter():
+
+	args = (session['inputUsername'], )
+	cur.callproc('get_email_from_username', args)
+	for res in cur.stored_results():
+		inputEmail = res.fetchall()
+	inputEmail = inputEmail[0][0]
+	query="SELECT ArticlePage.Title, ArticlePage.Article_id from ArticlePage where Contributor_email = %s"
+	cur.execute(query,[inputEmail])
+	data=cur.fetchall()
+	print(data)
+	print(session['inputUsername'])
+	return render_template('myArticleFilter.html',data=data,inputUsername=session['inputUsername'])
 
 # mydb.close()
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
