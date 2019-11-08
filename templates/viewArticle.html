@@ -23,15 +23,26 @@
             </code></pre>
          <!-- </textarea> -->
         <br>
+        {% if comments %}
+            {% if comments|length>0 %}
+                {%- for item in comments recursive %}
+                    <li>{{ item.text }}</li>
+                    {%- if item.children -%}
+                        <ul class="children">{{ loop(item.children) }}</ul>
+                    {%- endif %}
+                {%- endfor %}
+            {% endif %}
+        {% endif %}
+
         <a href="{{url_for('getHomepage')}}">Back</a>
-        
-        <form class="" action=" {{url_for(viewArticle)}} " method="post">
+
+        <!-- <form class="" action=" " method="post">
             <input type="image" src="likebutton.png" name="actionrating" value="like">{{rating}}<input type="image" src="dislikebutton.jpeg" name="action" value="dislike">
-        </form>
+        </form> -->
 
         <link type="text/css" href="{{ url_for('static',filename='styles/monokai.css') }}" rel="stylesheet"/>
         <script type="text/javascript" src="{{url_for('static', filename = 'script/rainbow-custom.min.js')}}">
 
-        </script>        
+        </script>
     </body>
 </html>

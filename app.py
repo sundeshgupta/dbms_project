@@ -225,17 +225,47 @@ def addArticle():
 
 	return render_template('addArticle.html')
 
+class Comment:
+	"""docstring for Comment."""
+
+	def __init__(self, id):
+		self.id = id
+		self.text = None
+		self.children = []
+
+		cur.execute("SELECT Description from Comment where Comment_id = %s;", [self.id])
+		self.text = cur.fetchone()[0];
+
+		cur.execute("SELECT Comment_id from CommentFor where CommentFor_id = %s;", [self.id])
+
+		children = cur.fetchall();
+		for child in children:
+			self.children.append(Comment(child[0]))
+	def __str__(self):
+		return str(self.id)+str(self.text)+ str(self.children)
+
+# print(Comment(100))
 
 
 @app.route("/viewArticle.html",methods=['GET','POST'])
 def viewArticle():
 	data = None
+	articleComments = None
 	if request.method == 'POST':
 		inputArticle_id = request.form['inputArticleTitle']
 		with open ("./static/files/"+str(inputArticle_id)+".txt", "r") as text_file:
 			data = text_file.read()
 
-	return render_template('viewArticle.html', data = data)
+		print(inputArticle_id)
+		cur.execute("SELECT Comment_id from ContainsComment where Article_id = %s;", [inputArticle_id])
+		articleComments_id = cur.fetchall()
+		articleComments = []
+		for id in articleComments_id:
+			articleComments.append(Comment(id[0]))
+
+
+
+	return render_template('viewArticle.html', data = data, comments = articleComments)
 
 
 @app.route("/myArticleFilter.html",methods=['GET','POST'])

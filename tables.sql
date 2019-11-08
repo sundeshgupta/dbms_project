@@ -94,7 +94,7 @@ CREATE TABLE Comment
 	PRIMARY KEY (Comment_id)
 );
 
-CREATE TABLE ContainsCommment
+CREATE TABLE ContainsComment
 (
 	Comment_id INT,
 	Article_id INT,
@@ -107,7 +107,7 @@ CREATE TABLE CommentFor
 (
 	Comment_id INT,
 	CommentFor_id INT,
-	PRIMARY KEY (CommentFor_id),
+	PRIMARY KEY (CommentFor_id, Comment_id),
 	FOREIGN KEY (Comment_id) REFERENCES Comment(Comment_id),
 	FOREIGN KEY (CommentFor_id) REFERENCES Comment(Comment_id)
 );
