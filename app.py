@@ -201,11 +201,11 @@ def addArticle():
 
 		for res in cur.stored_results():
 			inputArticle_id = res.fetchall()
-
-		if inputCourse is not "select_course":
+		print(inputCourse)
+		if inputCourse!="select_course":
 			cur.execute("INSERT INTO CourseMaterial VALUES (%s, %s)", [inputCourse, inputArticle_id[0][0]])
 
-		if inputTag is not "select_tags":
+		if inputTag!="select_tags":
 			for tags in inputTag:
 
 				cur.callproc('get_tag_id_from_tag_name', (tags,))
@@ -224,6 +224,8 @@ def addArticle():
 		return redirect(url_for('addArticle'))
 
 	return render_template('addArticle.html')
+
+
 
 @app.route("/viewArticle.html",methods=['GET','POST'])
 def viewArticle():

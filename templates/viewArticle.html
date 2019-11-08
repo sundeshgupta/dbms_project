@@ -13,17 +13,22 @@
           <a href="{{ url_for('logout') }}"> Logout</a>
           <hr size=2>
         </div>
-        <textarea name="name" rows="8" cols="80" readonly>
-            <pre><code>
+        <!-- <textarea name="name" rows="8" cols="80" readonly> -->
+            <pre><code data-language = "c">
                 {% if data %}
                     {{data}}
                 {% else %}
                     <p><b>Error Reading Data from File!</b></p>
                 {%endif%}
             </code></pre>
-         </textarea>
+         <!-- </textarea> -->
     <br>
     <a href="{{url_for('getHomepage')}}">Back</a>
 
+
+    <link type="text/css" href="{{ url_for('static',filename='styles/monokai.css') }}" rel="stylesheet"/>
+    <script type="text/javascript" src="{{url_for('static', filename = 'script/rainbow-custom.min.js')}}">
+
+    </script>
     </body>
 </html>
