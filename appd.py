@@ -230,32 +230,40 @@ def addArticle():
 @app.route("/viewArticle.html",methods=['GET','POST'])
 def viewArticle():
 	data = None
+	inputactionrating = None	
 	if request.method == 'POST':
 		inputArticle_id = request.form['inputArticleTitle']
 		with open ("./static/files/"+str(inputArticle_id)+".txt", "r") as text_file:
 			data = text_file.read()
+			query="SELECT Weight from Rating where Article_id='%s; "
+		cur.execute(query,[inputArticle_id])
+		rating=cur.fetchone()
 
-	rating = None
-	print(inputArticle_id)
-	#print(request.form['actionrating'])
-	query="SELECT Weight from Rating where Article_id='%s; "
-	cur.execute(query,[inputArticle_id])
-	rating=cur.fetchone()
-	cur.fetchall()
-	args = (session['inputUsername'], )
-	cur.callproc('get_email_from_username', args)
-	for res in cur.stored_results():
-		inputEmail = res.fetchall()
-	inputEmail = inputEmail[0][0]
-	cur.fetchall()
-	if request.form('action')=='like':
-		rating=rating+1
-		query="ALTER TABLE Rating; Insert into Rating VALUES (inputArticle_id,rating,inputEmail);"
-		cur.execute(query)
-	if request.form('action')=='dislike':
-		rating=rating-1
-		query="ALTER TABLE Rating; Insert into Rating VALUES (inputArticle_id,rating,inputEmail);"
-
+	else:
+		rating = None
+		print(inputArticle_id)
+		#print(request.form['actionrating'])
+		query="SELECT Weight from Rating where Article_id='%s; "
+		cur.execute(query,[inputArticle_id])
+		rating=cur.fetchone()
+		cur.fetchall()
+		args = (session['inputUsername'], )
+		cur.callproc('get_email_from_username', args)
+		for res in cur.stored_results():
+			inputEmail = res.fetchall()
+		inputEmail = inputEmail[0][0]
+		cur.fetchall()
+		print(request.form.get['actionrating'])
+		if request.form['actionrating']=='like':
+			rating=rating+1
+			query="ALTER TABLE Rating; Insert into Rating VALUES (inputArticle_id,rating,inputEmail);"
+			cur.execute(query)
+		if request.form['actionrating']=='dislike':
+			rating=rating-1
+			query="ALTER TABLE Rating; Insert into Rating VALUES (inputArticle_id,rating,inputEmail);"
+			cur.execute(query)
+		mydb.commit()
+		return redirect(request.referrer)
 	return render_template('viewArticle.html', data = data,rating=rating)
 
 
