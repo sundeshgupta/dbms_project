@@ -36,13 +36,19 @@
 
         <a href="{{url_for('getHomepage')}}">Back</a>
 
-         <form class="" action="{{url_for('viewArticle')}}" method="get">
-            <input type="image" src="likebutton.png" name="actionrating" value="like">{{rating}}<input type="image" src="dislikebutton.jpeg" name="actionrating" value="dislike">
-        </form> 
+         <form class="" action="{{url_for('viewArticle')}}" method="post">
+             <input type="text" name="inputRating" id="rating" value="test" hidden>
+             <button type="" id="like"><img src ="{{url_for('static', filename='likebutton.png')}}" ></button>{{rating}}
+             <button type="" id="dislike"><img src ="{{url_for('static', filename='dislikebutton')}}" ></button>
+            <!-- <input type="image" src="{{url_for('static', filename='likebutton.png')}}" name="btn" value="like" id="like">{{rating}}<input type="image" src="{{url_for('static', filename='dislikebutton')}}" name="btn" value="dislike" id="dislike"> -->
+        </form>
 
+        <script type="text/javascript" src="{{url_for('static', filename = 'script/jquery-3.4.1.js')}}">
+        </script>
         <link type="text/css" href="{{ url_for('static',filename='styles/monokai.css') }}" rel="stylesheet"/>
         <script type="text/javascript" src="{{url_for('static', filename = 'script/rainbow-custom.min.js')}}">
-
+        </script>
+        <script type="text/javascript" src="{{url_for('static', filename = 'script/viewArticle.js')}}">
         </script>
     </body>
 </html>

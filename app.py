@@ -246,16 +246,21 @@ class Comment:
 
 # print(Comment(100))
 
-
 @app.route("/viewArticle.html",methods=['GET','POST'])
 def viewArticle():
+	cur = mydb.cursor(buffered=True)
 	data = None
 	articleComments = None
+	rating = int(0)
 	if request.method == 'POST':
-		inputArticle_id = request.form['inputArticleTitle']
+		try:
+			inputArticle_id = request.form['inputArticleTitle']
+		except:
+			inputArticle_id = session['inputArticle_id']
+			print("article id picked from session")
 		with open ("./static/files/"+str(inputArticle_id)+".txt", "r") as text_file:
 			data = text_file.read()
-
+		session['inputArticle_id'] = inputArticle_id
 		print(inputArticle_id)
 		cur.execute("SELECT Comment_id from ContainsComment where Article_id = %s;", [inputArticle_id])
 		articleComments_id = cur.fetchall()
@@ -264,10 +269,44 @@ def viewArticle():
 			articleComments.append(Comment(id[0]))
 
 
-	print(len(articleComments))
+		query="SELECT SUM(Weight) from Rating where Article_id=%s;"
+		cur.execute(query,[inputArticle_id])
+		rating_temp=cur.fetchone()
 
-	return render_template('viewArticle.html', data = data, comments = articleComments)
+		if (rating_temp!=None):
+			rating = rating_temp[0]
 
+		args = (session['inputUsername'], )
+		cur.callproc('get_email_from_username', args)
+		for res in cur.stored_results():
+			inputEmail = res.fetchall()
+		inputEmail = inputEmail[0][0]
+		try:
+			if request.form['inputRating']=='like':
+				print("in like")
+				cur.execute("DELETE FROM Rating where Contributor_email = %s;", [inputEmail])
+				query="Insert into Rating VALUES (%s,%s,%s);"
+				cur.execute(query, [inputArticle_id, 1, inputEmail])
+				print("like done")
+			if request.form['inputRating']=='dislike':
+				print("in dislike")
+				cur.execute("DELETE FROM Rating where Contributor_email = %s;", [inputEmail])
+				query="Insert into Rating VALUES (%s,%s,%s);"
+				cur.execute(query, [inputArticle_id, -1, inputEmail])
+				print("dislike done")
+			mydb.commit()
+			# return redirect(url_for('viewArticle'))
+		except:
+			# print(request.form['inputRating'])
+			print("inputRating not defined")
+
+	query="SELECT SUM(Weight) from Rating where Article_id=%s;"
+	cur.execute(query,[inputArticle_id])
+	rating_temp=cur.fetchone()
+
+	if (rating_temp!=None):
+		rating = rating_temp[0]
+	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating)
 
 @app.route("/myArticleFilter.html",methods=['GET','POST'])
 def myArticleFilter():
