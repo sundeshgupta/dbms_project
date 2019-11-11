@@ -123,7 +123,7 @@ CREATE TRIGGER RATING_UPDATE
 BEFORE INSERT ON Rating
 FOR EACH ROW
 BEGIN
-DELETE FROM RATING WHERE Contributor_email=NEW.contributor_email;
+DELETE FROM Rating WHERE Contributor_email=NEW.contributor_email;
 END$$
 
 CREATE TRIGGER After_Article_Insertion_ViewsOrManages
