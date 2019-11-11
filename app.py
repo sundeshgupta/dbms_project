@@ -264,6 +264,7 @@ def viewArticle():
 			articleComments.append(Comment(id[0]))
 
 
+	print(len(articleComments))
 
 	return render_template('viewArticle.html', data = data, comments = articleComments)
 
