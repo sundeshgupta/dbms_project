@@ -119,18 +119,11 @@ BEGIN
 SELECT PhoneNoDetails.Phone_no,T.Email_add,T.uname from PhoneNoDetails inner join (SELECT Login.Email as Email_add,User.Name as uname from Login inner join User on User.Email=Login.Email where Login.Username=usersname) T on Email_add=Email;
 END$$
 
-CREATE TRIGGER RATING_UPDATE
-BEFORE INSERT ON Rating
-FOR EACH ROW
-BEGIN
-DELETE FROM Rating WHERE Contributor_email=NEW.contributor_email;
-END$$
-
 CREATE TRIGGER After_Article_Insertion_ViewsOrManages
 AFTER INSERT ON ArticlePage
 FOR EACH ROW
 BEGIN
-INSERT INTO ViewsOrManages VALUES (NEW.contributor_email,NEW.article_id);
+INSERT INTO ViewsOrManages VALUES (NEW.Contributor_email,NEW.article_id);
 END$$
 
 CREATE TRIGGER After_Article_Insertion_DATE
