@@ -133,13 +133,6 @@ BEGIN
 INSERT INTO ViewsOrManages VALUES (NEW.contributor_email,NEW.article_id);
 END$$
 
-CREATE TRIGGER After_Article_Deletion
-BEFORE DELETE ON ArticlePage
-FOR EACH ROW
-BEGIN
-DELETE FROM ViewsOrManages WHERE ViewsOrManages.Article_id = OLD.Article_id;
-END$$
-
 CREATE TRIGGER After_Article_Insertion_DATE
 BEFORE INSERT ON ArticlePage
 FOR EACH ROW
@@ -153,6 +146,18 @@ FOR EACH ROW
 BEGIN
 SET NEW.Comment_date=CURDATE();
 END$$
+
+CREATE TRIGGER ARTICLE_DELETE
+BEFORE DELETE ON ArticlePage
+FOR EACH ROW
+BEGIN
+DELETE from Rating where Rating.Article_id=OLD.Article_id;
+DELETE FROM ViewsOrManages where ViewsOrManages.Article_id=Old.Article_id;
+DELETE FROM TaggedTopics where TaggedTopics.Article_id=Old.Article_id;
+DELETE FROM CourseMaterial where CourseMaterial.Article_id=Old.Article_id;
+DELETE FROM ContainsComment where ContainsComment.Article_id=Old.Article_id;
+END$$
+
 
 CREATE PROCEDURE get_email_from_username(uname varchar(25))
 BEGIN
