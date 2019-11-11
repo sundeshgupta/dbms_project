@@ -3,6 +3,9 @@
     <head>
         <meta charset="utf-8">
         <title></title>
+        <style>
+           
+        </style>
     </head>
     <body>
         <h2 align="center">IITI Code Management</h2>
@@ -34,18 +37,19 @@
             {% endif %}
         {% endif %}
 
-        <a href="{{url_for('getHomepage')}}">Back</a>
-
          <form class="" action="{{url_for('viewArticle')}}" method="post">
              <input type="text" name="inputRating" id="rating" value="test" hidden>
-             <button type="" id="like"><img src ="{{url_for('static', filename='likebutton.png')}}" ></button>{{rating}}
-             <button type="" id="dislike"><img src ="{{url_for('static', filename='dislikebutton')}}" ></button>
+             <button type="" id="like"><img src ="{{url_for('static', filename='likebutton.png')}}"width="10" height="10" ></button>{{rating}}
+             <button type="" id="dislike"><img src ="{{url_for('static', filename='dislikebutton')}}" width="10" height="10"></button>
             <!-- <input type="image" src="{{url_for('static', filename='likebutton.png')}}" name="btn" value="like" id="like">{{rating}}<input type="image" src="{{url_for('static', filename='dislikebutton')}}" name="btn" value="dislike" id="dislike"> -->
         </form>
+
+         <a href="{{url_for('getHomepage')}}">Back</a>
 
         <script type="text/javascript" src="{{url_for('static', filename = 'script/jquery-3.4.1.js')}}">
         </script>
         <link type="text/css" href="{{ url_for('static',filename='styles/monokai.css') }}" rel="stylesheet"/>
+        <link type="text/css" href="{{ url_for('static',filename='styles/viewArticle.css') }}" rel="stylesheet"/>
         <script type="text/javascript" src="{{url_for('static', filename = 'script/rainbow-custom.min.js')}}">
         </script>
         <script type="text/javascript" src="{{url_for('static', filename = 'script/viewArticle.js')}}">

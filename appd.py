@@ -225,47 +225,88 @@ def addArticle():
 
 	return render_template('addArticle.html')
 
+class Comment:
+	"""docstring for Comment."""
 
+	def __init__(self, id):
+		self.id = id
+		self.text = None
+		self.children = []
+
+		cur.execute("SELECT Description from Comment where Comment_id = %s;", [self.id])
+		self.text = cur.fetchone()[0];
+
+		cur.execute("SELECT Comment_id from CommentFor where CommentFor_id = %s;", [self.id])
+
+		children = cur.fetchall();
+		for child in children:
+			self.children.append(Comment(child[0]))
+	def __str__(self):
+		return str(self.id)+str(self.text)+ str(self.children)
+
+# print(Comment(100))
 
 @app.route("/viewArticle.html",methods=['GET','POST'])
 def viewArticle():
+	cur = mydb.cursor(buffered=True)
 	data = None
-	inputactionrating = None	
+	articleComments = None
+	rating = int(0)
 	if request.method == 'POST':
-		inputArticle_id = request.form['inputArticleTitle']
+		try:
+			inputArticle_id = request.form['inputArticleTitle']
+		except:
+			inputArticle_id = session['inputArticle_id']
+			print("article id picked from session")
 		with open ("./static/files/"+str(inputArticle_id)+".txt", "r") as text_file:
 			data = text_file.read()
-			query="SELECT Weight from Rating where Article_id='%s; "
-		cur.execute(query,[inputArticle_id])
-		rating=cur.fetchone()
-
-	else:
-		rating = None
+		session['inputArticle_id'] = inputArticle_id
 		print(inputArticle_id)
-		#print(request.form['actionrating'])
-		query="SELECT Weight from Rating where Article_id='%s; "
+		cur.execute("SELECT Comment_id from ContainsComment where Article_id = %s;", [inputArticle_id])
+		articleComments_id = cur.fetchall()
+		articleComments = []
+		for id in articleComments_id:
+			articleComments.append(Comment(id[0]))
+
+
+		query="SELECT SUM(Weight) from Rating where Article_id=%s;"
 		cur.execute(query,[inputArticle_id])
-		rating=cur.fetchone()
-		cur.fetchall()
+		rating_temp=cur.fetchone()
+
+		if (rating_temp!=None):
+			rating = rating_temp[0]
+
 		args = (session['inputUsername'], )
 		cur.callproc('get_email_from_username', args)
 		for res in cur.stored_results():
 			inputEmail = res.fetchall()
 		inputEmail = inputEmail[0][0]
-		cur.fetchall()
-		print(request.form.get['actionrating'])
-		if request.form['actionrating']=='like':
-			rating=rating+1
-			query="ALTER TABLE Rating; Insert into Rating VALUES (inputArticle_id,rating,inputEmail);"
-			cur.execute(query)
-		if request.form['actionrating']=='dislike':
-			rating=rating-1
-			query="ALTER TABLE Rating; Insert into Rating VALUES (inputArticle_id,rating,inputEmail);"
-			cur.execute(query)
-		mydb.commit()
-		return redirect(request.referrer)
-	return render_template('viewArticle.html', data = data,rating=rating)
+		try:
+			if request.form['inputRating']=='like':
+				print("in like")
+				cur.execute("DELETE FROM Rating where Contributor_email = %s;", [inputEmail])
+				query="Insert into Rating VALUES (%s,%s,%s);"
+				cur.execute(query, [inputArticle_id, 1, inputEmail])
+				print("like done")
+			if request.form['inputRating']=='dislike':
+				print("in dislike")
+				cur.execute("DELETE FROM Rating where Contributor_email = %s;", [inputEmail])
+				query="Insert into Rating VALUES (%s,%s,%s);"
+				cur.execute(query, [inputArticle_id, -1, inputEmail])
+				print("dislike done")
+			mydb.commit()
+			# return redirect(url_for('viewArticle'))
+		except:
+			# print(request.form['inputRating'])
+			print("inputRating not defined")
 
+	query="SELECT SUM(Weight) from Rating where Article_id=%s;"
+	cur.execute(query,[inputArticle_id])
+	rating_temp=cur.fetchone()
+
+	if (rating_temp!=None):
+		rating = rating_temp[0]
+	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating)
 
 @app.route("/myArticleFilter.html",methods=['GET','POST'])
 def myArticleFilter():
@@ -281,6 +322,7 @@ def myArticleFilter():
 	print(data)
 	print(session['inputUsername'])
 	return render_template('myArticleFilter.html',data=data,inputUsername=session['inputUsername'])
+
 
 # mydb.close()
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
