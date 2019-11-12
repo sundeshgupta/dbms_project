@@ -31,7 +31,7 @@
         {% if myprofile_guest %}
         <form class="" action="{{url_for('viewArticle')}}" method="post">
             <button type="button" id="CommentButton" onclick="showBox()">Add Comment</button>
-            <input type="text" name="inputDescription" id="AddDescription" hidden><button type="submit" name="btn" value="Add Comment" id="AddComment" hidden>Submit</button>
+            <input type="text" name="inputDescription" id="AddDescription" placeholder="Add Comment" ><button type="submit" name="btn" value="Add Comment" id="AddComment" >Submit Comment</button>
             <script type="text/javascript">
             function showBox(){
                 var x = document.getElementById("AddComment");
@@ -50,6 +50,8 @@
             }
             </script>
         </form>
+        <br><br><br>
+
         {% endif %}
 
         {% if comments %}
@@ -60,28 +62,29 @@
                         <form class="" action="{{url_for('viewArticle')}}" method="post">
                             <button type="button" id="ReplyButton" onclick="showBox()">Add Reply</button>
                             <input type="text" name="inputCommentFor" value="{{item.id}}" hidden>
-                            <input type="text" name="inputDescriptionReply" id="AddDescription" hidden><button type="submit" name="btn" value="Add Reply" id="AddReply" hidden>Submit</button>
+                            <input type="text" name="inputDescriptionReply" placeholder="Add Reply" id="AddDescriptionReply"><button type="submit" name="btn" value="Add Reply" id="AddReply">Submit Reply</button>
+
                             <script type="text/javascript">
                             function showBox(){
-                                var x = document.getElementById("AddReply");
-                                  if (x.style.display === "none") {
-                                    x.style.display = "block";
-                                  } else {
-                                    x.style.display = "none";
-                                  }
-                                  x = document.getElementById("AddDescription");
-                                  if (x.style.display === "none") {
-                                    x.style.display = "block";
-                                  } else {
-                                    x.style.display = "none";
-                                  }
+                                // var x = document.getElementById("AddReply");
+                                //   if (x.style.display === "none") {
+                                //     x.style.display = "block";
+                                //   } else {
+                                //     x.style.display = "none";
+                                //   }
+                                //   x = document.getElementById("AddDescriptionReply");
+                                //   if (x.style.display === "none") {
+                                //     x.style.display = "block";
+                                //   } else {
+                                //     x.style.display = "none";
+                                //   }
 
                             }
                             </script>
                         </form>
                     {% endif %}
                     {%- if item.children -%}
-                        <ul class="children">{{ loop(item.children) }}</ul>
+                        <ul class="children">{{ loop(item.children) }}</ul><br>
                     {%- endif %}
                 {%- endfor %}
             {% endif %}

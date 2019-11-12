@@ -338,6 +338,7 @@ def viewArticle():
 
 				for res in cur.stored_results():
 					inputComment_id = res.fetchall()
+				inputComment_id = inputComment_id[0][0]
 				cur.execute("INSERT INTO CommentFor VALUES (%s, %s);", [inputComment_id, inputCommentFor_id])
 				mydb.commit()
 				print("reply added")
