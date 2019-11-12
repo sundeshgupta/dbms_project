@@ -5,6 +5,7 @@ import os
 from io import BytesIO
 import numpy as np
 import mysql.connector
+import traceback
 PEOPLE_FOLDER='/home/sundesh/Desktop/dbms_project/'
 GUEST = "guest12345678910"
 app = Flask(__name__)
@@ -147,7 +148,7 @@ def myprofile():
 @app.route("/CourseFilter",methods=['GET','POST'])
 def filterCourse():
 	coursecode=request.form['course_selected']
-	query="SELECT AP.Title, AP.Article_id from CourseMaterial inner join (Select ArticlePage.*,Rating.Weight from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id)AP on AP.Article_id=CourseMaterial.Article_id where Course_code=%s order by AP.Weight;"
+	query="SELECT AP.Title, AP.Article_id from CourseMaterial inner join (Select ArticlePage.*,sum(Rating.Weight) APW from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id GROUP BY ArticlePage.Article_id)AP on AP.Article_id=CourseMaterial.Article_id where Course_code=%s order by AP.APW;"
 	cur.execute(query,[coursecode])
 	data=cur.fetchall()
 	cur.execute("select Description from Course where Course_code=%s",[coursecode])
@@ -159,7 +160,7 @@ def filterCourse():
 def filterTag():
 	tags=request.form.getlist('tag_selected')
 
-	query="SELECT AP.Title,AP.Article_id,count(distinct TaggedTopics.Tag_id) C from TaggedTopics inner join (Select ArticlePage.*,Rating.Weight from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id)AP on AP.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( "
+	query="SELECT AP.Title,AP.Article_id,count(distinct TaggedTopics.Tag_id) C,AP.Weight from TaggedTopics inner join (Select ArticlePage.*,Rating.Weight from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id)AP on AP.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( "
 
 	i=0
 	string = []
@@ -170,7 +171,7 @@ def filterTag():
 			query = query + " %s, "
 		i=i+1
 		string.append(tag)
-	query = query + ")) GROUP BY AP.Article_id HAVING C="+str(len(tags))+" ORDER BY AP.Weight ;"
+	query = query + ")) GROUP BY AP.Article_id HAVING C="+str(len(tags))+" order by AP.Weight;"
 	print(query)
 	print(string)
 	cur.execute(query,string)
@@ -178,6 +179,20 @@ def filterTag():
 
 	return render_template('TagFilter.html',data=data,tagsizezero = "This feature is not available for guest user!")
 
+@app.route("/myArticleFilter.html",methods=['GET','POST'])
+def myArticleFilter():
+
+	args = (session['inputUsername'], )
+	cur.callproc('get_email_from_username', args)
+	for res in cur.stored_results():
+		inputEmail = res.fetchall()
+	inputEmail = inputEmail[0][0]
+	query="SELECT AP.Title, AP.Article_id from (Select ArticlePage.*,sum(Rating.Weight) APW from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id GROUP BY ArticlePage.Article_id )AP where AP.Contributor_email = %s order by AP.APW;"
+	cur.execute(query,[inputEmail])
+	data=cur.fetchall()
+	print(data)
+	print(session['inputUsername'])
+	return render_template('myArticleFilter.html',data=data,inputUsername=session['inputUsername'])
 
 @app.route("/addArticle.html", methods = ['GET', 'POST'])
 def addArticle():
@@ -253,6 +268,10 @@ def viewArticle():
 	articleComments = None
 	rating = int(0)
 	inputEmail = None
+	myprofile_guest = "This feature is available for non guest user!"
+	inputArticle_id = None
+	if session['inputUsername']==GUEST:
+		myprofile_guest = None
 	if request.method == 'POST':
 		try:
 			inputArticle_id = request.form['inputArticleTitle']
@@ -261,19 +280,13 @@ def viewArticle():
 			print("article id picked from session")
 		with open ("./static/files/"+str(inputArticle_id)+".txt", "r") as text_file:
 			data = text_file.read()
+
 		session['inputArticle_id'] = inputArticle_id
 		print(inputArticle_id)
-		cur.execute("SELECT Comment_id from ContainsComment where Article_id = %s;", [inputArticle_id])
-		articleComments_id = cur.fetchall()
-		articleComments = []
-		for id in articleComments_id:
-			articleComments.append(Comment(id[0]))
-
 
 		query="SELECT SUM(Weight) from Rating where Article_id=%s;"
 		cur.execute(query,[inputArticle_id])
 		rating_temp=cur.fetchone()
-
 		if (rating_temp!=None):
 			rating = rating_temp[0]
 
@@ -282,6 +295,8 @@ def viewArticle():
 		for res in cur.stored_results():
 			inputEmail = res.fetchall()
 		inputEmail = inputEmail[0][0]
+
+
 		try:
 			if request.form['inputRating']=='like':
 				print("in like")
@@ -312,6 +327,46 @@ def viewArticle():
 		except:
 			print("Deletion not possible")
 
+		if myprofile_guest!=None:
+			try:
+				inputDescription = request.form['inputDescription']
+				cur.execute("INSERT INTO Comment(Contributor_email, Description) VALUES (%s, %s);", [inputEmail, inputDescription])
+				cur.callproc('get_max_comment_id')
+
+				for res in cur.stored_results():
+					inputComment_id = res.fetchall()
+				inputComment_id = inputComment_id[0][0]
+				cur.execute("INSERT INTO ContainsComment VALUES (%s, %s);",[inputComment_id, inputArticle_id])
+				mydb.commit()
+				print("added comment..")
+			except:
+				# traceback.print_exc()
+				print("Comment Not Added")
+
+		if myprofile_guest!=None:
+			try:
+				inputDescription = request.form['inputDescriptionReply']
+				inputCommentFor_id = request.form['inputCommentFor']
+
+				cur.execute("INSERT INTO Comment(Contributor_email, Description) VALUES (%s, %s);", [inputEmail, inputDescription])
+				cur.callproc('get_max_comment_id')
+
+				for res in cur.stored_results():
+					inputComment_id = res.fetchall()
+				inputComment_id = inputComment_id[0][0]
+				cur.execute("INSERT INTO CommentFor VALUES (%s, %s);", [inputComment_id, inputCommentFor_id])
+				mydb.commit()
+				print("reply added")
+			except:
+				traceback.print_exc()
+				print("reply not done")
+
+	cur.execute("SELECT Comment_id from ContainsComment where Article_id = %s;", [inputArticle_id])
+	articleComments_id = cur.fetchall()
+	articleComments = []
+	for id in articleComments_id:
+		articleComments.append(Comment(id[0]))
+
 	query="SELECT SUM(Weight) from Rating where Article_id=%s;"
 	cur.execute(query,[inputArticle_id])
 	rating_temp=cur.fetchone()
@@ -326,28 +381,11 @@ def viewArticle():
 	print(articleId)
 	cur.execute("SELECT Contributor_email from ArticlePage where Article_id= %s;",[articleId])
 	query_val=cur.fetchone();
-	# print(data)
 	ArticleAuthor=query_val[0]
 	check=0;
 	if (inputEmail==ArticleAuthor):
 		check=1
-	
-	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating,check=check)
-
-@app.route("/myArticleFilter.html",methods=['GET','POST'])
-def myArticleFilter():
-
-	args = (session['inputUsername'], )
-	cur.callproc('get_email_from_username', args)
-	for res in cur.stored_results():
-		inputEmail = res.fetchall()
-	inputEmail = inputEmail[0][0]
-	query="SELECT AP.Title, AP.Article_id from (Select ArticlePage.*,Rating.Weight from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id)AP where AP.Contributor_email = %s order by AP.Weight;"
-	cur.execute(query,[inputEmail])
-	data=cur.fetchall()
-	print(data)
-	print(session['inputUsername'])
-	return render_template('myArticleFilter.html',data=data,inputUsername=session['inputUsername'])
+	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating,check=check, myprofile_guest = myprofile_guest)
 
 
 # mydb.close()
