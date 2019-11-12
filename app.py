@@ -275,7 +275,14 @@ class Comment:
 	def __str__(self):
 		return str(self.id)+str(self.text)+ str(self.children)
 
-# print(Comment(100))
+def getTeachers():
+	query="SELECT Email from User where Permission = 1;"
+	cur.execute(query)
+	teachers = cur.fetchall()
+	result = []
+	for teacher in teachers:
+		result.append(teacher[0])
+	return result
 
 @app.route("/viewArticle.html",methods=['GET','POST'])
 def viewArticle():
@@ -375,7 +382,7 @@ def viewArticle():
 				mydb.commit()
 				print("reply added")
 			except:
-				traceback.print_exc()
+				# traceback.print_exc()
 				print("reply not done")
 
 	cur.execute("SELECT Comment_id from ContainsComment where Article_id = %s;", [inputArticle_id])
@@ -402,6 +409,9 @@ def viewArticle():
 	check=0;
 	if (inputEmail==ArticleAuthor):
 		check=1
+	teachers=getTeachers()
+	if (inputEmail in teachers):
+		check = 1
 	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating,check=check, myprofile_guest = myprofile_guest)
 
 @app.route("/EditArticle.html",methods=['GET','POST'])
