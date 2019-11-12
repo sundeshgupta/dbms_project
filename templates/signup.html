@@ -4,43 +4,48 @@
 
 </head>
     <title>Signup Page</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/signup.css') }}">
 <body>
-    <div class="">
+     <div class="header">
+     <h1>IITI Code Management</h1>
+     <hr>
+    </div>
+    <div class="wrapper">
         <form class="" action="{{url_for('signup')}}" method="post">
 
             <div class="form-label-group">
+                <label id="icon" for="inputUsername"><i class="fafa-user">#</i></label>
                 <input type="name" id="inputName" name = "inputName" class="form-control" placeholder="Name*" required autofocus>
-                <label for="inputName">Full Name</label>
             </div>
 
             <div class="form-label-group">
+                <label id="icon" for="inputUsername"><i class="fafa-user">#</i></label>
                 <input type="email" id="inputEmail" name = "inputEmail" class="form-control" placeholder="Email Address*" required autofocus>
-                <label for="inputEmail">Email address</label>
             </div>
 
             <div class="form-label-group">
+                <label id="icon" for="inputUsername"><i class="fafa-user">#</i></label>
                 <input type="name" id="inputUsername" name = "inputUsername" class="form-control" placeholder="Username*" required>
-                <label for="inputUsername">Username</label>
             </div>
 
             <div class="form-label-group">
+                <label id="icon" for="inputUsername"><i class="fafa-user">#</i></label>
                 <input type="password" id="inputPassword" name = "inputPassword" class="form-control" placeholder="Password*" required>
-                <label for="inputPassword">New Password</label>
             </div>
 
             <div class="form-label-group">
+                <label id="icon" for="inputUsername"><i class="fafa-user">#</i></label>
                 <input type="password" id="inputPassword2" name = "inputPassword2" class="form-control" placeholder="Re-enter Password*" required>
-                <label for="inputPassword2">Re-enter Password</label>
             </div>
 
             <div class="form-label-group">
+                <label id="icon" for="inputUsername"><i class="fafa-user">#</i></label>
                 <input type="tel" id="inputPhonenumber1" name = "inputPhonenumber1" class="form-control" placeholder="Phone Number 1*" required>
-                <label for="inputPhonenumber1">Phone Number 1</label>
             </div>
 
             <div class="form-label-group">
+                <label id="icon" for="inputUsername"><i class="fafa-user">#</i></label>
                 <input type="tel" id="inputPhonenumber2" name = "inputPhonenumber2" class="form-control" placeholder="Phone Number 2">
-                <label for="inputPhonenumber2">Phone Number 2</label>
             </div>
 
             {% if error %}
@@ -56,11 +61,13 @@
                 <p class=error><strong>success:</strong> {{ success }}
                 <br>
             {% endif %}
-        </form>
-        {% if admin %}
-            <a href = "/form">back</a>
-        {% else %}
-            <a href = "/form">Already Have an Account? Login Here.</a>
-        {% endif %}
+            </form>
+            <div class="crtacc">
+            {% if admin %}
+                <a href = "/form">back</a>
+            {% else %}
+                <a href = "/form">Already Have an Account? Login Here.</a>
+            {% endif %}
+        </div>
     </div>
 </body>

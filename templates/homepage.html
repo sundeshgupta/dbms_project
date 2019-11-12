@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<head><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/homepage.css') }}">
+</head>
 <body>
 
-<h2 align="center">IITI Code Management</h2>
 
-<div class="header" align="right">
+<div class="header">
+<h1 align="center">IITI Code Management</h1>
+<div class="subheader">
     {% if admin %}
-        <a href="{{url_for('signup')}}">Add Teacher</a>
+        <a href="{{url_for('signup')}}">Add Teacher |</a>
     {% endif %}
-  <a href="{{url_for('addArticle')}}">Add Article</a>
-  <a href="{{url_for('myprofile')}}">My Profile</a>
+  <a href="{{url_for('addArticle')}}">Add Article |</a>
+  <a href="{{url_for('myprofile')}}">My Profile |</a>
   <a href="{{ url_for('logout') }}"> Logout</a>
   <hr size=2>
+</div>
 </div>
 
 {% if myprofile_guest %}
@@ -20,35 +24,35 @@
             alert("{{myprofile_guest}}");
     </script>
 {% endif %}
-
-<form class="" action=" {{url_for('filterCourse')}} " method="post">
-    <select name="course_selected" required>
-      <option value="" selected>Course</option>
-      <option value="CS203">CS203</option>
-      <option value="CS204">CS204</option>
-      <option value="CS207">CS207</option>
-      <option value="CS303">CS303</option>
-      <option value="CS403">CS403</option>
-    </select>
-    <input type="submit" value="Filter">
-</form>
-
-<form action="{{ url_for('filterTag') }}" method="post">
-    <select data-placeholder="Begin typing a name to filter..." multiple class="chosen-select" name="tag_selected" id="tag_selected" required>
-      <option value="select_tags"></option>
-      <option value="c++">C++</option>
-      <option value="html">Html</option>
-      <option value="python">Python</option>
-      <option value="algorithms">Algorithms</option>
-      <option value="DS">Data Structures</option>
-      <option value="math">Math</option>
-      <option value="OS">Operating System</option>
-      <option value="sql">SQL</option>
-      <option value="ML">Machine Learning</option>
-    </select>
-    <input type="submit" value="Filter">
-</form>
-
+<div class="wrapper">
+  <form class="" action=" {{url_for('filterCourse')}} " method="post">
+      <select name="course_selected" data-placeholder="Begin typing a name to filter by Course..." class = "chosen-select" required>
+        <option value="" selected>Course</option>
+        <option value="CS203">CS203</option>
+        <option value="CS204">CS204</option>
+        <option value="CS207">CS207</option>
+        <option value="CS303">CS303</option>
+        <option value="CS403">CS403</option>
+      </select>
+      <input type="submit" value="Filter By Course">
+  </form>
+  <br>
+  <form action="{{ url_for('filterTag') }}" method="post">
+      <select data-placeholder="Tag" multiple class="chosen-select" name="tag_selected" id="tag_selected" required>
+        <option value="select_tags"></option>
+        <option value="c++">C++</option>
+        <option value="html">Html</option>
+        <option value="python">Python</option>
+        <option value="algorithms">Algorithms</option>
+        <option value="DS">Data Structures</option>
+        <option value="math">Math</option>
+        <option value="OS">Operating System</option>
+        <option value="sql">SQL</option>
+        <option value="ML">Machine Learning</option>
+      </select>
+      <input type="submit" value="Filter By Tag">
+  </form>
+</div>
 
 
 

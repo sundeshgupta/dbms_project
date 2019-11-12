@@ -40,20 +40,9 @@ a:hover{
   text-decoration: underline;
   
 }
-input[type=text] {
-  width: 450px;
-  height: 25px;
-  border:1px solid #cbc9c9;
-  padding-left:5px;
-  /*margin-left:-5px;*/
-  margin-top:3px;
-  border-radius:0px 3px 3px 0px;
-  -webkit-border-radius:0px 3px 3px 0px;
-  -moz-border-radius:0px 3px 3px 0px;
-}
-button[type=submit]{
-  width: 150px;
-  height: 25px;
+input[type=submit]{
+  width: 237px;
+  height: 40px;
   margin-left:17px;
   border-radius:3px;
   background-color:#000000;
@@ -63,28 +52,8 @@ button[type=submit]{
   -moz-border-radius:2px 2px 12px 12px;
  
 }
-button[type=submit]:hover{
-  background-color:#a6a6a6;
-  color:#f8f8f8; 
-  cursor:pointer;
-  
-}
-
-.editArticle a{
-  width: 170px;
-  height: 25px;
-  margin-left:17px;
-  border-radius:3px;
-  background-color:#000000;
-  color:#f8f8f8;
-  border-radius:2px 2px 12px 12px;
-  -webkit-border-radius:2px 2px 12px 12px;
-  -moz-border-radius:2px 2px 12px 12px;
-  font-size:13px;
- 
-}
-.editArticle a:hover{
-  background-color:#a6a6a6;
+input[type=submit]:hover{
+  background-color:#607d8b;
   color:#f8f8f8; 
   cursor:pointer;
   
@@ -92,8 +61,8 @@ button[type=submit]:hover{
 .header{ 
   /*height: 280px; */
   /*border-radius:5px;*/
-  text-align:center;
-  height:165px;
+  /*text-align:center;*/
+  height:200px;
   /*-moz-border-radius:5px;
   -webkit-border-radius:5px;*/
 }
@@ -108,30 +77,32 @@ button[type=submit]:hover{
 }
 .header hr{
   opacity:1;
-  
 }
-.subheader {
-  text-align:right;
+.subheader{
+ display:inline;
+}
+.leftalign{
+  float:left;
+  display:inline;
+}
+.rightalign{
+  float:right;
+  display:inline;
 }
 .subheader a{
   color:#000000;
 }
-.wrapper {
-  margin-left:500px;
-  width: 815px; 
-  height: 300px; 
+.Profile {
+  margin:auto;
+  width: 500px; 
+  height: 250px; 
+  line-height:2;
   border-radius:5px;
   align-content:center;
+  text-align:center;
   -moz-border-radius:5px;
   -webkit-border-radius:5px;
 }
-.wrapper hr{
-  opacity:1;
-}
-.wrapper select{
-  width: 200px;
-}
-
-.middle{
-	align-content:center;
+.Profile a{
+  color:#000000;
 }

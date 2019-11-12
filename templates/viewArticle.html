@@ -2,35 +2,45 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8">
-        <title></title>
-      <!--   <style>
-           #DeleteButton{
-            display: none;
-           }
-        </style> -->
+        <title>View Article</title>
     </head>
     <body>
-        <h2 align="center">IITI Code Management</h2>
-
-        <div class="header" align="right">
-          <a href="{{url_for('addArticle')}}">Add Article</a>
-          <a href="{{url_for('myprofile')}}">My Profile</a>
+        <div class="header">
+        <h1 align="center">IITI Code Management</h1>
+        <div class="subheader">
+            {% if admin %}
+                <a href="{{url_for('signup')}}">Add Teacher |</a>
+            {% endif %}
+          <a href="{{url_for('addArticle')}}">Add Article |</a>
+          <a href="{{url_for('myprofile')}}">My Profile |</a>
           <a href="{{ url_for('logout') }}"> Logout</a>
           <hr size=2>
         </div>
-        <!-- <textarea name="name" rows="8" cols="80" readonly> -->
-            <pre><code data-language = "c">
-                {% if data %}
-                    {{data}}
-                {% else %}
-                    Error Reading Data from File!
+        </div>
+            <pre><code data-language = "c">{% if data %}{{data}}{% else %}
+                Error Reading Data from File!
                 {%endif%}
             </code></pre>
-         <!-- </textarea> -->
-        <br>
-        {% if myprofile_guest %}
+        <div class = "middle" align = "center">
         <form class="" action="{{url_for('viewArticle')}}" method="post">
-            <button type="button" id="CommentButton" onclick="showBox()">Add Comment</button>
+             <input type="text" name="inputRating" id="rating" value="test" hidden>
+             <button type="" id="like"><img src ="{{url_for('static', filename='likebutton.png')}}"width="20" height="20" ></button>{{rating}}
+             <button type="" id="dislike"><img src ="{{url_for('static', filename='dislikebutton')}}" width="20" height="20"></button>
+            <!-- <input type="image" src="{{url_for('static', filename='likebutton.png')}}" name="btn" value="like" id="like">{{rating}}<input type="image" src="{{url_for('static', filename='dislikebutton')}}" name="btn" value="dislike" id="dislike"> -->
+        </form>
+        {% if check %}
+            <form class="" action="{{url_for('viewArticle')}}" method="post">
+                <input type="text" name="DeleteArticle" id="RemoveArticle" value="test" hidden>
+                <button type = "submit" id="DeleteButton">Delete Article</button>
+            </form>
+            <div class="editArticle">
+            <a href="{{ url_for('EditArticle') }}">&nbsp&nbsp&nbspEdit Article&nbsp&nbsp&nbsp</a>
+            </div>
+        {% endif %}
+        {% if myprofile_guest %}
+        </div>
+        <form class="" action="{{url_for('viewArticle')}}" method="post">
+            <!-- <button type="button" id="CommentButton" onclick="showBox()">Add Comment</button> -->
             <input type="text" name="inputDescription" id="AddDescription" placeholder="Add Comment" ><button type="submit" name="btn" value="Add Comment" id="AddComment" >Submit Comment</button>
             <script type="text/javascript">
             function showBox(){
@@ -50,17 +60,17 @@
             }
             </script>
         </form>
-        <br><br><br>
+        <br>
 
         {% endif %}
 
         {% if comments %}
             {% if comments|length>0 %}
                 {%- for item in comments recursive %}
-                    <li>{{ item.text }}</li>
+                    <li><b>{{ item.text }}</b> <font color="blue"><i><u>{{item.contributor}}</u></i></font> <i>{{item.date}}<i></li>
                     {% if myprofile_guest %}
                         <form class="" action="{{url_for('viewArticle')}}" method="post">
-                            <button type="button" id="ReplyButton" onclick="showBox()">Add Reply</button>
+                           <!--  <button type="button" id="ReplyButton" onclick="showBox()">Add Reply</button> -->
                             <input type="text" name="inputCommentFor" value="{{item.id}}" hidden>
                             <input type="text" name="inputDescriptionReply" placeholder="Add Reply" id="AddDescriptionReply"><button type="submit" name="btn" value="Add Reply" id="AddReply">Submit Reply</button>
 
@@ -84,26 +94,11 @@
                         </form>
                     {% endif %}
                     {%- if item.children -%}
-                        <ul class="children">{{ loop(item.children) }}</ul><br>
+                        <ul class="children">{{ loop(item.children) }}</ul>
                     {%- endif %}
                 {%- endfor %}
             {% endif %}
         {% endif %}
-
-        {% if check %}
-            <form class="" action="{{url_for('viewArticle')}}" method="post">
-                <input type="text" name="DeleteArticle" id="RemoveArticle" value="test" hidden>
-                <button id="DeleteButton">Delete Article</button>
-            </form>
-            <a href="{{ url_for('EditArticle') }}">Edit Article</a>
-        {% endif %}
-        <form class="" action="{{url_for('viewArticle')}}" method="post">
-             <input type="text" name="inputRating" id="rating" value="test" hidden>
-             <button type="" id="like"><img src ="{{url_for('static', filename='likebutton.png')}}"width="10" height="10" ></button>{{rating}}
-             <button type="" id="dislike"><img src ="{{url_for('static', filename='dislikebutton')}}" width="10" height="10"></button>
-            <!-- <input type="image" src="{{url_for('static', filename='likebutton.png')}}" name="btn" value="like" id="like">{{rating}}<input type="image" src="{{url_for('static', filename='dislikebutton')}}" name="btn" value="dislike" id="dislike"> -->
-        </form>
-
          <a href="{{url_for('getHomepage')}}">Back</a>
 
         <script type="text/javascript" src="{{url_for('static', filename = 'script/jquery-3.4.1.js')}}">

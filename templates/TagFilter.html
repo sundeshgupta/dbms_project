@@ -1,41 +1,55 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<title>Tag Filter</title>
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/tagFilter.css') }}">
 	</head>
 	<body>
-
+		<div class="header">
+        <h1 align="center">IITI Code Management</h1>
+        <div class="subheader">
+            {% if admin %}
+                <a href="{{url_for('signup')}}">Add Teacher |</a>
+            {% endif %}
+          <a href="{{url_for('addArticle')}}">Add Article |</a>
+          <a href="{{url_for('myprofile')}}">My Profile |</a>
+          <a href="{{ url_for('logout') }}"> Logout</a>
+          <hr size=2>
+        </div>
+        </div>
 		{% if number==0 %}
 			<script type="text/javascript">
             alert("{{tagsizezero}}");
     		</script>
 		{% endif%}
-
-		<h2 align="center">IITI Code Management</h2>
-		<div class="header" align="right">
-			<a href="{{url_for('addArticle')}}">Add Article</a>
-			<a href="{{url_for('myprofile')}}">My Profile</a>
-			<a href="{{ url_for('logout') }}"> Logout</a>
-		<hr size=2>
-		</div>
-
+		<div class = "wrapper">
 		<div class="tagfiltertop" align="center">
 				The articles have been filtered according to your choice
 		</div>
-
-		<div class="tagfiltermain" align="left">
-			<ul>
+		<br><br>
+		<div class="tagfiltermain" align = "left">
+			<table align = "center">
+            <tr>
+                <th>Article Title</th>
+                <th>Rating</th>
+                <th></th>
+            </tr>
 				<form class="" action="{{url_for('viewArticle')}}" method="post">
-					{% if number!=0 %}
-						{% if data %}
-							{% for row in data %}
-								<li>{{ row[0] }} </li>
-								<input type="submit" name="inputArticleTitle" value="{{row[1]}}">
-							{% endfor %}
-						{% endif %}
-					{%endif%}
+					 {% for row in data %}
+                    <tr>
+                    <td>{{row[0]}}</td>
+                    <td>
+                        {{row[3]}}
+                    </td>
+                    <td>
+                        <button type="submit" name="inputArticleTitle" value="{{row[1]}}">Open</button>
+                    </td>
+                    </tr>
+                    {% endfor %}
 				</form>
-			</ul>
-		<div>
+			</table>
+		</div>
+		</div>
 
 		<a href="{{url_for('getHomepage')}}">Back</a>
 

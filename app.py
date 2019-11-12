@@ -165,7 +165,7 @@ def myprofile():
 @app.route("/CourseFilter",methods=['GET','POST'])
 def filterCourse():
 	coursecode=request.form['course_selected']
-	query="SELECT AP.Title, AP.Article_id from CourseMaterial inner join (Select ArticlePage.*,sum(Rating.Weight) APW from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id GROUP BY ArticlePage.Article_id)AP on AP.Article_id=CourseMaterial.Article_id where Course_code=%s order by AP.APW;"
+	query="SELECT AP.Title, AP.Article_id, AP.APW from CourseMaterial inner join (Select ArticlePage.*,sum(Rating.Weight) APW from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id GROUP BY ArticlePage.Article_id)AP on AP.Article_id=CourseMaterial.Article_id where Course_code=%s order by AP.APW DESC;"
 	cur.execute(query,[coursecode])
 	data=cur.fetchall()
 	cur.execute("select Description from Course where Course_code=%s",[coursecode])
@@ -204,7 +204,7 @@ def myArticleFilter():
 	for res in cur.stored_results():
 		inputEmail = res.fetchall()
 	inputEmail = inputEmail[0][0]
-	query="SELECT AP.Title, AP.Article_id from (Select ArticlePage.*,sum(Rating.Weight) APW from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id GROUP BY ArticlePage.Article_id )AP where AP.Contributor_email = %s order by AP.APW;"
+	query="SELECT AP.Title, AP.Article_id, AP.APW from (Select ArticlePage.*,sum(Rating.Weight) APW from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id GROUP BY ArticlePage.Article_id )AP where AP.Contributor_email = %s order by AP.APW DESC;"
 	cur.execute(query,[inputEmail])
 	data=cur.fetchall()
 	print(data)
@@ -266,9 +266,16 @@ class Comment:
 		self.id = id
 		self.text = None
 		self.children = []
-
+		self.contributor = None
+		self.date = None
 		cur.execute("SELECT Description from Comment where Comment_id = %s;", [self.id])
 		self.text = cur.fetchone()[0];
+
+		cur.execute("SELECT Contributor_email from Comment where Comment_id = %s;", [self.id])
+		self.contributor = cur.fetchone()[0];
+
+		cur.execute("SELECT Comment_date from Comment where Comment_id = %s;", [self.id])
+		self.date = cur.fetchone()[0];
 
 		cur.execute("SELECT Comment_id from CommentFor where CommentFor_id = %s;", [self.id])
 
@@ -333,7 +340,7 @@ def viewArticle():
 				print("like done")
 			if request.form['inputRating']=='dislike':
 				print("in dislike")
-				cur.execute("DELETE FROM Rating where Contributor_email = %s; and Article_id", [inputEmail, inputArticle_id])
+				cur.execute("DELETE FROM Rating where Contributor_email = %s and Article_id = %s;", [inputEmail, inputArticle_id])
 				query="Insert into Rating VALUES (%s,%s,%s);"
 				cur.execute(query, [inputArticle_id, -1, inputEmail])
 				print("dislike done")

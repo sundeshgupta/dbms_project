@@ -5,43 +5,32 @@
 
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/loginpage.css') }}">
 </head>
-    <body>
+<body>
+    <div class="wrapper">
+     <h1>IITI Code Management</h1>
+     <hr>
+        <form action='{{main}}' method = "POST">
+            {% if error %}
+                    <p class=error><strong>Error:</strong> {{ error }}</p>
+            {% endif %}
 
-<style>@font-face {
-  font-family: Ubuntu-Regular;
-  src: url('../fonts/ubuntu/Ubuntu-Regular.ttf');
-}
+            <label id="icon" for="inputUsername"><i class="fafa-user">#</i></label>
+            <input type="name" id="inputUsername" name = "inputUsername" class="form-control" placeholder="Username">
 
-@font-face {
-  font-family: Ubuntu-Bold;
-  src: url('../fonts/ubuntu/Ubuntu-Bold.ttf');
-}</style>
+            <label id="icon" for="inputPassword"><i class="fafa-user">#</i></label>
+            <input type="password" id="inputPassword" name = "inputPassword" class="form-control" placeholder="Password">
+            <br><br>
+
+            <input type="submit" name = "btn" id = "guest" value = "Sign In">
+            <br><br>
+            <input type="submit" name = "btn" id = "guest" value = "Login as guest">
+            <hr>
+            <div class="crtacc">
+                <a href="{{url_for('signup')}}">Don't have an account. Sign Up here?</a>
+            </div>
+        </form>
+    </div>
 
 
-        <div class="">
-            <h5 class="">Sign In</h5>
-
-            <form class="form-signin" action='{{main}}' method = "POST">
-                {% if error %}
-                        <p class=error><strong>Error:</strong> {{ error }}
-                {% endif %}
-                <div class="form-label-group">
-                    <input type="name" id="inputUsername" name = "inputUsername" class="form-control" placeholder="Username">
-                    <label for="inputUsername">username</label>
-                </div>
-
-                <div class="form-label-group">
-                    <input type="password" id="inputPassword" name = "inputPassword" class="form-control" placeholder="Password">
-                    <label for="inputPassword">Password</label>
-                </div>
-
-                <input class="" type="submit" name = "btn" id = "guest" value = "Submit">
-                <input class="" type="submit" name = "btn" id = "guest" value = "Login as guest">
-
-                <a href="{{url_for('signup')}}">Don't have an account. Sign Up here?<a>
-
-            </form>
-        </div>
-
-	</body>
+</body>
 </html>

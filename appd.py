@@ -6,6 +6,7 @@ from io import BytesIO
 import numpy as np
 import mysql.connector
 import traceback
+from hashlib import md5
 PEOPLE_FOLDER='/home/sundesh/Desktop/dbms_project/'
 GUEST = "guest12345678910"
 app = Flask(__name__)
@@ -20,7 +21,12 @@ cur = mydb.cursor()
 def main():
 	if 'inputUsername' in session:
 		username_session = escape(session['inputUsername'])
-		return render_template('homepage.html', session_user_name=username_session)
+		check = None
+		if session['inputUsername']=="admin":
+			check = 1
+
+		print(str(check)+"rendering homepage....")
+		return render_template('homepage.html', session_user_name=username_session, admin = check)
 	return redirect(url_for('login'))
 
 
@@ -44,7 +50,7 @@ def login():
 			if cur.fetchone()[0]:
 				cur.execute("SELECT Password FROM Login WHERE Username = %s;", [username_form]) # FETCH THE HASHED PASSWORD
 				for row in cur.fetchall():
-					if password_form == row[0]:
+					if md5(password_form.encode()).hexdigest() == row[0]:
 						session['inputUsername'] = request.form['inputUsername']
 						return redirect(url_for('main'))
 					else:
@@ -58,7 +64,12 @@ def login():
 
 @app.route("/homepage", methods=['GET','POST'])
 def getHomepage():
-	return(render_template('homepage.html'))
+	check = None
+	if session['inputUsername']=="admin":
+		check = 1
+
+	print(check)
+	return render_template('homepage.html', admin = check)
 
 @app.route('/logout')
 def logout():
@@ -105,9 +116,13 @@ def signup():
 			if phonenumber1_form==phonenumber2_form:
 				error.append("Phone numbers are same.")
 				flag = 1
-
 		if not flag:
-			cur.execute("INSERT INTO User VALUES (%s,%s,%s)", [email_form, name_form, '0'])
+			permission = int(0)
+			if 'inputUsername' in session:
+				if session['inputUsername']=="admin":
+					check = 1
+			password_form = (md5(password_form.encode()).hexdigest())
+			cur.execute("INSERT INTO User VALUES (%s,%s,%s)", [email_form, name_form, permission])
 			cur.execute("INSERT INTO Login VALUES (%s, %s, %s)", [email_form, password_form, username_form])
 
 			cur.execute("INSERT INTO PhoneNoDetails VALUES (%s,%s)", [email_form, phonenumber1_form])
@@ -116,9 +131,12 @@ def signup():
 				cur.execute("INSERT INTO PhoneNoDetails VALUES (%s,%s)", [email_form, phonenumber2_form])
 
 			success = "Signup successfull. Please go to login page."
-
+	check = None
+	if 'inputUsername' in session:
+		if session['inputUsername']=="admin":
+			check = 1
 	mydb.commit()
-	return render_template('signup.html', error=error, success=success)
+	return render_template('signup.html', error=error, success=success, admin = check)
 
 @app.route('/myprofile',methods=['GET','POST'])
 def myprofile():
@@ -144,7 +162,6 @@ def myprofile():
 		i=i+1
 	return render_template('myprofile.html',uname=uname,name=name,email=email,phnno1=phnno1,phnno2=phnno2)
 
-
 @app.route("/CourseFilter",methods=['GET','POST'])
 def filterCourse():
 	coursecode=request.form['course_selected']
@@ -160,7 +177,7 @@ def filterCourse():
 def filterTag():
 	tags=request.form.getlist('tag_selected')
 
-	query="SELECT AP.Title,AP.Article_id,count(distinct TaggedTopics.Tag_id) C,AP.Weight from TaggedTopics inner join (Select ArticlePage.*,Rating.Weight from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id)AP on AP.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( "
+	query="SELECT ArticlePageRating.Title,ArticlePageRating.Article_id,count(distinct TaggedTopics.Tag_id) C, sum(Weight) S from TaggedTopics inner join ArticlePageRating on ArticlePageRating.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( "
 
 	i=0
 	string = []
@@ -171,7 +188,7 @@ def filterTag():
 			query = query + " %s, "
 		i=i+1
 		string.append(tag)
-	query = query + ")) GROUP BY AP.Article_id HAVING C="+str(len(tags))+" order by AP.Weight;"
+	query = query + ")) GROUP BY ArticlePageRating.Article_id HAVING C="+str(len(tags))+" ORDER BY S DESC;"
 	print(query)
 	print(string)
 	cur.execute(query,string)
@@ -193,6 +210,8 @@ def myArticleFilter():
 	print(data)
 	print(session['inputUsername'])
 	return render_template('myArticleFilter.html',data=data,inputUsername=session['inputUsername'])
+
+
 
 @app.route("/addArticle.html", methods = ['GET', 'POST'])
 def addArticle():
@@ -259,7 +278,14 @@ class Comment:
 	def __str__(self):
 		return str(self.id)+str(self.text)+ str(self.children)
 
-# print(Comment(100))
+def getTeachers():
+	query="SELECT Email from User where Permission = 1;"
+	cur.execute(query)
+	teachers = cur.fetchall()
+	result = []
+	for teacher in teachers:
+		result.append(teacher[0])
+	return result
 
 @app.route("/viewArticle.html",methods=['GET','POST'])
 def viewArticle():
@@ -301,13 +327,13 @@ def viewArticle():
 		try:
 			if request.form['inputRating']=='like':
 				print("in like")
-				cur.execute("DELETE FROM Rating where Contributor_email = %s;", [inputEmail])
+				cur.execute("DELETE FROM Rating where Contributor_email = %s and Article_id = %s;", [inputEmail, inputArticle_id])
 				query="Insert into Rating VALUES (%s,%s,%s);"
 				cur.execute(query, [inputArticle_id, 1, inputEmail])
 				print("like done")
 			if request.form['inputRating']=='dislike':
 				print("in dislike")
-				cur.execute("DELETE FROM Rating where Contributor_email = %s;", [inputEmail])
+				cur.execute("DELETE FROM Rating where Contributor_email = %s; and Article_id", [inputEmail, inputArticle_id])
 				query="Insert into Rating VALUES (%s,%s,%s);"
 				cur.execute(query, [inputArticle_id, -1, inputEmail])
 				print("dislike done")
@@ -359,7 +385,7 @@ def viewArticle():
 				mydb.commit()
 				print("reply added")
 			except:
-				traceback.print_exc()
+				# traceback.print_exc()
 				print("reply not done")
 
 	cur.execute("SELECT Comment_id from ContainsComment where Article_id = %s;", [inputArticle_id])
@@ -386,6 +412,9 @@ def viewArticle():
 	check=0;
 	if (inputEmail==ArticleAuthor):
 		check=1
+	teachers=getTeachers()
+	if (inputEmail in teachers):
+		check = 1
 	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating,check=check, myprofile_guest = myprofile_guest)
 
 @app.route("/EditArticle.html",methods=['GET','POST'])

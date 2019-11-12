@@ -1,33 +1,54 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/myarticleFilter.css') }}">
+        <title>My Article</title>
     </head>
     <body>
 
-        <h2 align="center">IITI Code Management</h2>
-        <div class="header" align="right">
-            <a href="{{url_for('addArticle')}}">Add Article</a>
-            <a href="{{url_for('myprofile')}}">My Profile</a>
-            <a href="{{ url_for('logout') }}"> Logout</a>
-            <hr size=2>
+        <div class="header">
+        <h1 align="center">IITI Code Management</h1>
+        <div class="subheader">
+            {% if admin %}
+                <a href="{{url_for('signup')}}">Add Teacher |</a>
+            {% endif %}
+          <a href="{{url_for('addArticle')}}">Add Article |</a>
+          <a href="{{url_for('myprofile')}}">My Profile |</a>
+          <a href="{{ url_for('logout') }}"> Logout</a>
+          <hr size=2>
         </div>
-
+        </div>
+        <div class = "wrapper">
         <div class="" align="center">
-        	{{inputUsername}} <br>
+            {{inputUsername}} <br>
         </div>
-
-        <div class="" align="left">
+        <br><br>
+        <div class="coursefiltermain" align="left">
+        <table align = "center">
+            <tr>
+                <th>Article Title</th>
+                <th>Rating</th>
+                <th></th>
+            </tr>
             <form class="" action="{{url_for('viewArticle')}}" method="post">
-                <ul>
                     {% for row in data %}
-                    <li>{{ row[0] }} </li>
-                        <input type="submit" name="inputArticleTitle" value="{{row[1]}}">
+                    <tr>
+                    <td>{{row[0]}}</td>
+                    <td>
+                        {{row[2]}}
+                    </td>
+                    <td>
+                        <button type="submit" name="inputArticleTitle" value="{{row[1]}}">Open</button>
+                    </td>
+                    </tr>
                     {% endfor %}
-                </ul>
             </form>
-        <div>
+        </table>
+        </div>
+    </div>
 
-        <a href="{{url_for('myprofile')}}">Back</a>
+
+        <a href="{{url_for('getHomepage')}}">Back</a>
 
 
 
