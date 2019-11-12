@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+          textarea {
+              border: 0 none white;
+              overflow: hidden;
+              padding: 0;
+              outline: none;
+              background-color: #D0D0D0;
+          }
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+        <script>
+        $(document).ready(function(){
+          $("#load").click(function(){
+            var c = $("#my_variable").val();
+            $("#EditCode").val(c);
+          });
+        });
+        </script>
+
+    </head>
+    <body>
+        <h2 align="center">IITI Code Management</h2>
+
+        <div class="header" align="right">
+          <a href="{{url_for('addArticle')}}">Add Article</a>
+          <a href="{{url_for('myprofile')}}">My Profile</a>
+          <a href="{{ url_for('logout') }}"> Logout</a>
+          <hr size=2>
+        </div>
+        <input type="hidden"  id="my_variable" value="{{ data }}">
+        <form class="" action="{{url_for('EditArticle')}}" method="post">
+          <textarea name="CodeEdit" id="EditCode" rows="1" cols="100" style="height:1em; width:200px;" placeholder="Enter Your Code Here*"></textarea>
+          <button type='button' id="load">Load my Code</button>
+          <input type='submit' name='btn' value='Edit Code'>
+        </form>
+
+        <script src="{{ url_for('static',filename='script/addArticle.js') }}"></script>
+    </body>
+</html>

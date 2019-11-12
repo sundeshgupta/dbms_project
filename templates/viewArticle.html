@@ -95,6 +95,7 @@
                 <input type="text" name="DeleteArticle" id="RemoveArticle" value="test" hidden>
                 <button id="DeleteButton">Delete Article</button>
             </form>
+            <a href="{{ url_for('EditArticle') }}">Edit Article</a>
         {% endif %}
         <form class="" action="{{url_for('viewArticle')}}" method="post">
              <input type="text" name="inputRating" id="rating" value="test" hidden>

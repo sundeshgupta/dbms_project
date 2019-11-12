@@ -294,7 +294,8 @@ def viewArticle():
 		cur.callproc('get_email_from_username', args)
 		for res in cur.stored_results():
 			inputEmail = res.fetchall()
-		inputEmail = inputEmail[0][0]
+		if len(inputEmail)>0:
+			inputEmail = inputEmail[0][0]
 
 
 		try:
@@ -387,6 +388,21 @@ def viewArticle():
 		check=1
 	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating,check=check, myprofile_guest = myprofile_guest)
 
+@app.route("/EditArticle.html",methods=['GET','POST'])
+def EditArticle():
+	inputArticle_id = session['inputArticle_id']
+	with open ("./static/files/"+str(inputArticle_id)+".txt", "r") as text_file:
+			data = text_file.read()
+	if request.method=='POST':
+		inputCode=request.form['CodeEdit']
+		with open("./static/files/"+str(inputArticle_id)+".txt", "w") as text_file:
+			print(inputCode, file=text_file)
+		return redirect(url_for('viewArticle'), code=307)
+
+
+	print(inputArticle_id)
+	print(data)
+	return render_template('EditArticle.html',inputArticle_id=inputArticle_id, data=data)
 
 # mydb.close()
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
