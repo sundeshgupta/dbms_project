@@ -151,6 +151,13 @@ DELETE FROM CourseMaterial where CourseMaterial.Article_id=Old.Article_id;
 DELETE FROM ContainsComment where ContainsComment.Article_id=Old.Article_id;
 END$$
 
+CREATE TRIGGER COMMENT_DELETE
+BEFORE DELETE ON Comment
+FOR EACH ROW
+BEGIN
+DELETE FROM CommentFor where CommentFor.CommentFor_id=Old.Comment_id;
+DELETE FROM ContainsComment where ContainsComment.Comment_id=OLD.Comment_id;
+END$$
 
 CREATE PROCEDURE get_email_from_username(uname varchar(25))
 BEGIN
