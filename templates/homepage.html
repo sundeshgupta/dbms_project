@@ -6,6 +6,9 @@
 <h2 align="center">IITI Code Management</h2>
 
 <div class="header" align="right">
+    {% if admin %}
+        <a href="{{url_for('signup')}}">Add Teacher</a>
+    {% endif %}
   <a href="{{url_for('addArticle')}}">Add Article</a>
   <a href="{{url_for('myprofile')}}">My Profile</a>
   <a href="{{ url_for('logout') }}"> Logout</a>

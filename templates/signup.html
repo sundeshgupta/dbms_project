@@ -57,6 +57,10 @@
                 <br>
             {% endif %}
         </form>
-        <a href = "/form">Already Have an Account? Login Here.</a>
+        {% if admin %}
+            <a href = "/form">back</a>
+        {% else %}
+            <a href = "/form">Already Have an Account? Login Here.</a>
+        {% endif %}
     </div>
 </body>

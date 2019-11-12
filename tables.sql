@@ -27,7 +27,7 @@ CREATE TABLE ArticlePage
 (
 	Article_id INT AUTO_INCREMENT,
 	Title VARCHAR(255),
-	Creation_date DATE,
+	Creation_date TIMESTAMP,
 	Contributor_email VARCHAR(50),
 	PRIMARY KEY (Article_id),
 	FOREIGN KEY (Contributor_email) REFERENCES User(Email)
@@ -89,7 +89,7 @@ CREATE TABLE Comment
 	Comment_id INT AUTO_INCREMENT,
 	-- Title VARCHAR(255),
 	Contributor_email VARCHAR(50),
-	Comment_date DATE,
+	Comment_date TIMESTAMP,
 	Description VARCHAR(255),
 	PRIMARY KEY (Comment_id)
 );
@@ -130,14 +130,21 @@ CREATE TRIGGER After_Article_Insertion_DATE
 BEFORE INSERT ON ArticlePage
 FOR EACH ROW
 BEGIN
-SET NEW.Creation_date = CURDATE();
+SET NEW.Creation_date = CURRENT_TIMESTAMP();
+END$$
+
+CREATE TRIGGER After_Article_Insertion_Rating
+AFTER INSERT ON ArticlePage
+FOR EACH ROW
+BEGIN
+INSERT INTO Rating VALUES (NEW.Article_id, 0, NEW.Contributor_email);
 END$$
 
 CREATE TRIGGER COMMENT_INSERT
 BEFORE INSERT ON Comment
 FOR EACH ROW
 BEGIN
-SET NEW.Comment_date=CURDATE();
+SET NEW.Comment_date=CURRENT_TIMESTAMP();
 END$$
 
 CREATE TRIGGER ARTICLE_DELETE
@@ -180,3 +187,6 @@ SELECT Tag_id FROM Tag where Name = tag_name;
 END$$
 
 DELIMITER ;
+
+create view ArticlePageRating as
+	Select ArticlePage.Article_id, ArticlePage.Title, ArticlePage.Creation_date, ArticlePage.Contributor_email, Rating.Weight from ArticlePage inner join Rating on ArticlePage.Article_id = Rating.Article_id;

@@ -1,0 +1,1 @@
+print('rating should have this article rating as 0')

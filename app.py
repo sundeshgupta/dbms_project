@@ -20,7 +20,12 @@ cur = mydb.cursor()
 def main():
 	if 'inputUsername' in session:
 		username_session = escape(session['inputUsername'])
-		return render_template('homepage.html', session_user_name=username_session)
+		check = None
+		if session['inputUsername']=="admin":
+			check = 1
+
+		print(str(check)+"rendering homepage....")
+		return render_template('homepage.html', session_user_name=username_session, admin = check)
 	return redirect(url_for('login'))
 
 
@@ -58,7 +63,12 @@ def login():
 
 @app.route("/homepage", methods=['GET','POST'])
 def getHomepage():
-	return(render_template('homepage.html'))
+	check = None
+	if session['inputUsername']=="admin":
+		check = 1
+
+	print(check)
+	return render_template('homepage.html', admin = check)
 
 @app.route('/logout')
 def logout():
@@ -107,7 +117,10 @@ def signup():
 				flag = 1
 
 		if not flag:
-			cur.execute("INSERT INTO User VALUES (%s,%s,%s)", [email_form, name_form, '0'])
+			permission = int(0)
+			if (session['inputUsername']=="admin"):
+				permission = 1
+			cur.execute("INSERT INTO User VALUES (%s,%s,%s)", [email_form, name_form, permission])
 			cur.execute("INSERT INTO Login VALUES (%s, %s, %s)", [email_form, password_form, username_form])
 
 			cur.execute("INSERT INTO PhoneNoDetails VALUES (%s,%s)", [email_form, phonenumber1_form])
@@ -116,9 +129,11 @@ def signup():
 				cur.execute("INSERT INTO PhoneNoDetails VALUES (%s,%s)", [email_form, phonenumber2_form])
 
 			success = "Signup successfull. Please go to login page."
-
+	check = None
+	if session['inputUsername']=="admin":
+		check = 1
 	mydb.commit()
-	return render_template('signup.html', error=error, success=success)
+	return render_template('signup.html', error=error, success=success, admin = check)
 
 @app.route('/myprofile',methods=['GET','POST'])
 def myprofile():
@@ -144,11 +159,10 @@ def myprofile():
 		i=i+1
 	return render_template('myprofile.html',uname=uname,name=name,email=email,phnno1=phnno1,phnno2=phnno2)
 
-
 @app.route("/CourseFilter",methods=['GET','POST'])
 def filterCourse():
 	coursecode=request.form['course_selected']
-	query="SELECT ArticlePage.Title, ArticlePage.Article_id from CourseMaterial inner join ArticlePage on ArticlePage.Article_id=CourseMaterial.Article_id where Course_code=%s;"
+	query="SELECT AP.Title, AP.Article_id from CourseMaterial inner join (Select ArticlePage.*,sum(Rating.Weight) APW from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id GROUP BY ArticlePage.Article_id)AP on AP.Article_id=CourseMaterial.Article_id where Course_code=%s order by AP.APW;"
 	cur.execute(query,[coursecode])
 	data=cur.fetchall()
 	cur.execute("select Description from Course where Course_code=%s",[coursecode])
@@ -160,7 +174,7 @@ def filterCourse():
 def filterTag():
 	tags=request.form.getlist('tag_selected')
 
-	query="SELECT ArticlePage.Title,ArticlePage.Article_id,count(distinct TaggedTopics.Tag_id) C from TaggedTopics inner join ArticlePage on ArticlePage.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( "
+	query="SELECT ArticlePageRating.Title,ArticlePageRating.Article_id,count(distinct TaggedTopics.Tag_id) C, sum(Weight) S from TaggedTopics inner join ArticlePageRating on ArticlePageRating.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( "
 
 	i=0
 	string = []
@@ -171,13 +185,30 @@ def filterTag():
 			query = query + " %s, "
 		i=i+1
 		string.append(tag)
-	query = query + ")) GROUP BY ArticlePage.Article_id HAVING C="+str(len(tags))+" ;"
+	query = query + ")) GROUP BY ArticlePageRating.Article_id HAVING C="+str(len(tags))+" ORDER BY S DESC;"
 	print(query)
 	print(string)
 	cur.execute(query,string)
 	data=cur.fetchall()
 
 	return render_template('TagFilter.html',data=data,tagsizezero = "This feature is not available for guest user!")
+
+@app.route("/myArticleFilter.html",methods=['GET','POST'])
+def myArticleFilter():
+
+	args = (session['inputUsername'], )
+	cur.callproc('get_email_from_username', args)
+	for res in cur.stored_results():
+		inputEmail = res.fetchall()
+	inputEmail = inputEmail[0][0]
+	query="SELECT AP.Title, AP.Article_id from (Select ArticlePage.*,sum(Rating.Weight) APW from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id GROUP BY ArticlePage.Article_id )AP where AP.Contributor_email = %s order by AP.APW;"
+	cur.execute(query,[inputEmail])
+	data=cur.fetchall()
+	print(data)
+	print(session['inputUsername'])
+	return render_template('myArticleFilter.html',data=data,inputUsername=session['inputUsername'])
+
+
 
 @app.route("/addArticle.html", methods = ['GET', 'POST'])
 def addArticle():
@@ -286,13 +317,13 @@ def viewArticle():
 		try:
 			if request.form['inputRating']=='like':
 				print("in like")
-				cur.execute("DELETE FROM Rating where Contributor_email = %s;", [inputEmail])
+				cur.execute("DELETE FROM Rating where Contributor_email = %s and Article_id = %s;", [inputEmail, inputArticle_id])
 				query="Insert into Rating VALUES (%s,%s,%s);"
 				cur.execute(query, [inputArticle_id, 1, inputEmail])
 				print("like done")
 			if request.form['inputRating']=='dislike':
 				print("in dislike")
-				cur.execute("DELETE FROM Rating where Contributor_email = %s;", [inputEmail])
+				cur.execute("DELETE FROM Rating where Contributor_email = %s; and Article_id", [inputEmail, inputArticle_id])
 				query="Insert into Rating VALUES (%s,%s,%s);"
 				cur.execute(query, [inputArticle_id, -1, inputEmail])
 				print("dislike done")
@@ -373,22 +404,21 @@ def viewArticle():
 		check=1
 	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating,check=check, myprofile_guest = myprofile_guest)
 
+@app.route("/EditArticle.html",methods=['GET','POST'])
+def EditArticle():
+	inputArticle_id = session['inputArticle_id']
+	with open ("./static/files/"+str(inputArticle_id)+".txt", "r") as text_file:
+			data = text_file.read()
+	if request.method=='POST':
+		inputCode=request.form['CodeEdit']
+		with open("./static/files/"+str(inputArticle_id)+".txt", "w") as text_file:
+			print(inputCode, file=text_file)
+		return redirect(url_for('viewArticle'), code=307)
 
-@app.route("/myArticleFilter.html",methods=['GET','POST'])
-def myArticleFilter():
 
-	args = (session['inputUsername'], )
-	cur.callproc('get_email_from_username', args)
-	for res in cur.stored_results():
-		inputEmail = res.fetchall()
-	inputEmail = inputEmail[0][0]
-	query="SELECT ArticlePage.Title, ArticlePage.Article_id from ArticlePage where Contributor_email = %s"
-	cur.execute(query,[inputEmail])
-	data=cur.fetchall()
+	print(inputArticle_id)
 	print(data)
-	print(session['inputUsername'])
-	return render_template('myArticleFilter.html',data=data,inputUsername=session['inputUsername'])
-
+	return render_template('EditArticle.html',inputArticle_id=inputArticle_id, data=data)
 
 # mydb.close()
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

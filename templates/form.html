@@ -38,13 +38,7 @@
                 <input class="" type="submit" name = "btn" id = "guest" value = "Submit">
                 <input class="" type="submit" name = "btn" id = "guest" value = "Login as guest">
 
-                <a href="{{url_for('signup')}}" onclick="retunr btnValue();">Don't have an account. Sign Up here?<a>
-                    <script type="text/javascript">
-                        function btnValue(){
-                            document.getElementById("guest").value = "guest";
-                            form.submit();
-                        }
-                    </script>
+                <a href="{{url_for('signup')}}">Don't have an account. Sign Up here?<a>
 
             </form>
         </div>
