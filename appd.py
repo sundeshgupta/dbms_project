@@ -252,6 +252,7 @@ def viewArticle():
 	data = None
 	articleComments = None
 	rating = int(0)
+	inputEmail = None
 	if request.method == 'POST':
 		try:
 			inputArticle_id = request.form['inputArticleTitle']
@@ -300,13 +301,38 @@ def viewArticle():
 			# print(request.form['inputRating'])
 			print("inputRating not defined")
 
+		try:
+			print(1000)
+			print(request.form['DeleteArticle'])
+			if request.form['DeleteArticle']=='test':
+				cur.execute("DELETE FROM ArticlePage where Article_id= %s;",[session['inputArticle_id']])
+				mydb.commit()
+				print("redirecting.....")
+				return redirect(url_for('myArticleFilter'))
+		except:
+			print("Deletion not possible")
+
 	query="SELECT SUM(Weight) from Rating where Article_id=%s;"
 	cur.execute(query,[inputArticle_id])
 	rating_temp=cur.fetchone()
-
 	if (rating_temp!=None):
 		rating = rating_temp[0]
-	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating)
+
+
+	args = (session['inputUsername'], )
+	cur.callproc('get_email_from_username', args)
+
+	articleId=session['inputArticle_id']
+	print(articleId)
+	cur.execute("SELECT Contributor_email from ArticlePage where Article_id= %s;",[articleId])
+	data=cur.fetchone();
+	print(data)
+	ArticleAuthor=data[0]
+	check=0;
+	if (inputEmail==ArticleAuthor):
+		check=1
+	
+	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating,check=check)
 
 @app.route("/myArticleFilter.html",methods=['GET','POST'])
 def myArticleFilter():
