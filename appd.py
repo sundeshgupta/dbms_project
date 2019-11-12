@@ -147,7 +147,7 @@ def myprofile():
 @app.route("/CourseFilter",methods=['GET','POST'])
 def filterCourse():
 	coursecode=request.form['course_selected']
-	query="SELECT ArticlePage.Title, ArticlePage.Article_id from CourseMaterial inner join ArticlePage on ArticlePage.Article_id=CourseMaterial.Article_id where Course_code=%s;"
+	query="SELECT AP.Title, AP.Article_id from CourseMaterial inner join (Select ArticlePage.*,Rating.Weight from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id)AP on AP.Article_id=CourseMaterial.Article_id where Course_code=%s order by AP.Weight;"
 	cur.execute(query,[coursecode])
 	data=cur.fetchall()
 	cur.execute("select Description from Course where Course_code=%s",[coursecode])
@@ -159,7 +159,7 @@ def filterCourse():
 def filterTag():
 	tags=request.form.getlist('tag_selected')
 
-	query="SELECT ArticlePage.Title,ArticlePage.Article_id,count(distinct TaggedTopics.Tag_id) C from TaggedTopics inner join ArticlePage on ArticlePage.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( "
+	query="SELECT AP.Title,AP.Article_id,count(distinct TaggedTopics.Tag_id) C from TaggedTopics inner join (Select ArticlePage.*,Rating.Weight from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id)AP on AP.Article_id=TaggedTopics.Article_id where Tag_id in (SELECT Tag.Tag_id from Tag inner join TaggedTopics on Tag.Tag_id=TaggedTopics.Tag_id where Tag.Name in ( "
 
 	i=0
 	string = []
@@ -170,7 +170,7 @@ def filterTag():
 			query = query + " %s, "
 		i=i+1
 		string.append(tag)
-	query = query + ")) GROUP BY ArticlePage.Article_id HAVING C="+str(len(tags))+" ;"
+	query = query + ")) GROUP BY AP.Article_id HAVING C="+str(len(tags))+" ORDER BY AP.Weight ;"
 	print(query)
 	print(string)
 	cur.execute(query,string)
@@ -325,9 +325,9 @@ def viewArticle():
 	articleId=session['inputArticle_id']
 	print(articleId)
 	cur.execute("SELECT Contributor_email from ArticlePage where Article_id= %s;",[articleId])
-	data=cur.fetchone();
-	print(data)
-	ArticleAuthor=data[0]
+	query_val=cur.fetchone();
+	# print(data)
+	ArticleAuthor=query_val[0]
 	check=0;
 	if (inputEmail==ArticleAuthor):
 		check=1
@@ -342,7 +342,7 @@ def myArticleFilter():
 	for res in cur.stored_results():
 		inputEmail = res.fetchall()
 	inputEmail = inputEmail[0][0]
-	query="SELECT ArticlePage.Title, ArticlePage.Article_id from ArticlePage where Contributor_email = %s"
+	query="SELECT AP.Title, AP.Article_id from (Select ArticlePage.*,Rating.Weight from ArticlePage inner join Rating on ArticlePage.Article_id=Rating.Article_id)AP where AP.Contributor_email = %s order by AP.Weight;"
 	cur.execute(query,[inputEmail])
 	data=cur.fetchall()
 	print(data)
