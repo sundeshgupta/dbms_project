@@ -279,7 +279,8 @@ def viewArticle():
 		cur.callproc('get_email_from_username', args)
 		for res in cur.stored_results():
 			inputEmail = res.fetchall()
-		inputEmail = inputEmail[0][0]
+		if len(inputEmail)>0:
+			inputEmail = inputEmail[0][0]
 
 
 		try:

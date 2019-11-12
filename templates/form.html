@@ -9,15 +9,15 @@
 
 <style>@font-face {
   font-family: Ubuntu-Regular;
-  src: url('../fonts/ubuntu/Ubuntu-Regular.ttf'); 
+  src: url('../fonts/ubuntu/Ubuntu-Regular.ttf');
 }
 
 @font-face {
   font-family: Ubuntu-Bold;
-  src: url('../fonts/ubuntu/Ubuntu-Bold.ttf'); 
+  src: url('../fonts/ubuntu/Ubuntu-Bold.ttf');
 }</style>
 
-        
+
         <div class="">
             <h5 class="">Sign In</h5>
 
@@ -38,14 +38,13 @@
                 <input class="" type="submit" name = "btn" id = "guest" value = "Submit">
                 <input class="" type="submit" name = "btn" id = "guest" value = "Login as guest">
 
-                <a href="" onclick="retunr btnValue();">Don't have an account. Sign Up here?<a>
+                <a href="{{url_for('signup')}}" onclick="retunr btnValue();">Don't have an account. Sign Up here?<a>
                     <script type="text/javascript">
                         function btnValue(){
                             document.getElementById("guest").value = "guest";
                             form.submit();
                         }
                     </script>
-                <a href="">or Login as Guest</a>
 
             </form>
         </div>
