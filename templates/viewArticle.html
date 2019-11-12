@@ -28,10 +28,58 @@
             </code></pre>
          <!-- </textarea> -->
         <br>
+        {% if myprofile_guest %}
+        <form class="" action="{{url_for('viewArticle')}}" method="post">
+            <button type="button" id="CommentButton" onclick="showBox()">Add Comment</button>
+            <input type="text" name="inputDescription" id="AddDescription" hidden><button type="submit" name="btn" value="Add Comment" id="AddComment" hidden>Submit</button>
+            <script type="text/javascript">
+            function showBox(){
+                var x = document.getElementById("AddComment");
+                  if (x.style.display === "none") {
+                    x.style.display = "block";
+                  } else {
+                    x.style.display = "none";
+                  }
+                  x = document.getElementById("AddDescription");
+                  if (x.style.display === "none") {
+                    x.style.display = "block";
+                  } else {
+                    x.style.display = "none";
+                  }
+
+            }
+            </script>
+        </form>
+        {% endif %}
+
         {% if comments %}
             {% if comments|length>0 %}
                 {%- for item in comments recursive %}
                     <li>{{ item.text }}</li>
+                    {% if myprofile_guest %}
+                        <form class="" action="{{url_for('viewArticle')}}" method="post">
+                            <button type="button" id="ReplyButton" onclick="showBox()">Add Reply</button>
+                            <input type="text" name="inputCommentFor" value="{{item.id}}" hidden>
+                            <input type="text" name="inputDescriptionReply" id="AddDescription" hidden><button type="submit" name="btn" value="Add Reply" id="AddReply" hidden>Submit</button>
+                            <script type="text/javascript">
+                            function showBox(){
+                                var x = document.getElementById("AddReply");
+                                  if (x.style.display === "none") {
+                                    x.style.display = "block";
+                                  } else {
+                                    x.style.display = "none";
+                                  }
+                                  x = document.getElementById("AddDescription");
+                                  if (x.style.display === "none") {
+                                    x.style.display = "block";
+                                  } else {
+                                    x.style.display = "none";
+                                  }
+
+                            }
+                            </script>
+                        </form>
+                    {% endif %}
                     {%- if item.children -%}
                         <ul class="children">{{ loop(item.children) }}</ul>
                     {%- endif %}
@@ -42,10 +90,9 @@
         {% if check %}
             <form class="" action="{{url_for('viewArticle')}}" method="post">
                 <input type="text" name="DeleteArticle" id="RemoveArticle" value="test" hidden>
-                <button id="DeleteButton">Delete Article</button> 
+                <button id="DeleteButton">Delete Article</button>
             </form>
         {% endif %}
-
         <form class="" action="{{url_for('viewArticle')}}" method="post">
              <input type="text" name="inputRating" id="rating" value="test" hidden>
              <button type="" id="like"><img src ="{{url_for('static', filename='likebutton.png')}}"width="10" height="10" ></button>{{rating}}

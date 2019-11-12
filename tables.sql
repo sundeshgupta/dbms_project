@@ -86,8 +86,8 @@ CREATE TABLE CourseMaterial
 
 CREATE TABLE Comment
 (
-	Comment_id INT,
-	Title VARCHAR(255),
+	Comment_id INT AUTO_INCREMENT,
+	-- Title VARCHAR(255),
 	Contributor_email VARCHAR(50),
 	Comment_date DATE,
 	Description VARCHAR(255),
@@ -160,6 +160,11 @@ END$$
 CREATE PROCEDURE get_max_article_id()
 BEGIN
 SELECT MAX(Article_id) FROM ArticlePage;
+END$$
+
+CREATE PROCEDURE get_max_comment_id()
+BEGIN
+SELECT MAX(Comment_id) FROM Comment;
 END$$
 
 CREATE PROCEDURE get_tag_id_from_tag_name(tag_name varchar(25))

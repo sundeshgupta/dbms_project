@@ -5,6 +5,7 @@ import os
 from io import BytesIO
 import numpy as np
 import mysql.connector
+import traceback
 PEOPLE_FOLDER='/home/sundesh/Desktop/dbms_project/'
 GUEST = "guest12345678910"
 app = Flask(__name__)
@@ -178,7 +179,6 @@ def filterTag():
 
 	return render_template('TagFilter.html',data=data,tagsizezero = "This feature is not available for guest user!")
 
-
 @app.route("/addArticle.html", methods = ['GET', 'POST'])
 def addArticle():
 	if (session['inputUsername'])==GUEST:
@@ -252,6 +252,11 @@ def viewArticle():
 	data = None
 	articleComments = None
 	rating = int(0)
+	inputEmail = None
+	myprofile_guest = "This feature is available for non guest user!"
+	inputArticle_id = None
+	if session['inputUsername']==GUEST:
+		myprofile_guest = None
 	if request.method == 'POST':
 		try:
 			inputArticle_id = request.form['inputArticleTitle']
@@ -260,19 +265,13 @@ def viewArticle():
 			print("article id picked from session")
 		with open ("./static/files/"+str(inputArticle_id)+".txt", "r") as text_file:
 			data = text_file.read()
+
 		session['inputArticle_id'] = inputArticle_id
 		print(inputArticle_id)
-		cur.execute("SELECT Comment_id from ContainsComment where Article_id = %s;", [inputArticle_id])
-		articleComments_id = cur.fetchall()
-		articleComments = []
-		for id in articleComments_id:
-			articleComments.append(Comment(id[0]))
-
 
 		query="SELECT SUM(Weight) from Rating where Article_id=%s;"
 		cur.execute(query,[inputArticle_id])
 		rating_temp=cur.fetchone()
-
 		if (rating_temp!=None):
 			rating = rating_temp[0]
 
@@ -281,6 +280,8 @@ def viewArticle():
 		for res in cur.stored_results():
 			inputEmail = res.fetchall()
 		inputEmail = inputEmail[0][0]
+
+
 		try:
 			if request.form['inputRating']=='like':
 				print("in like")
@@ -300,13 +301,76 @@ def viewArticle():
 			# print(request.form['inputRating'])
 			print("inputRating not defined")
 
+		try:
+			print(1000)
+			print(request.form['DeleteArticle'])
+			if request.form['DeleteArticle']=='test':
+				cur.execute("DELETE FROM ArticlePage where Article_id= %s;",[session['inputArticle_id']])
+				mydb.commit()
+				print("redirecting.....")
+				return redirect(url_for('myArticleFilter'))
+		except:
+			print("Deletion not possible")
+
+		if myprofile_guest!=None:
+			try:
+				inputDescription = request.form['inputDescription']
+				cur.execute("INSERT INTO Comment(Contributor_email, Description) VALUES (%s, %s);", [inputEmail, inputDescription])
+				cur.callproc('get_max_comment_id')
+
+				for res in cur.stored_results():
+					inputComment_id = res.fetchall()
+				inputComment_id = inputComment_id[0][0]
+				cur.execute("INSERT INTO ContainsComment VALUES (%s, %s);",[inputComment_id, inputArticle_id])
+				mydb.commit()
+				print("added comment..")
+			except:
+				# traceback.print_exc()
+				print("Comment Not Added")
+
+		if myprofile_guest!=None:
+			try:
+				inputDescription = request.form['inputDescriptionReply']
+				inputCommentFor_id = request.form['inputCommentFor']
+
+				cur.execute("INSERT INTO Comment(Contributor_email, Description) VALUES (%s, %s);", [inputEmail, inputDescription])
+				cur.callproc('get_max_comment_id')
+
+				for res in cur.stored_results():
+					inputComment_id = res.fetchall()
+				cur.execute("INSERT INTO CommentFor VALUES (%s, %s);", [inputComment_id, inputCommentFor_id])
+				mydb.commit()
+				print("reply added")
+			except:
+				traceback.print_exc()
+				print("reply not done")
+
+	cur.execute("SELECT Comment_id from ContainsComment where Article_id = %s;", [inputArticle_id])
+	articleComments_id = cur.fetchall()
+	articleComments = []
+	for id in articleComments_id:
+		articleComments.append(Comment(id[0]))
+
 	query="SELECT SUM(Weight) from Rating where Article_id=%s;"
 	cur.execute(query,[inputArticle_id])
 	rating_temp=cur.fetchone()
-
 	if (rating_temp!=None):
 		rating = rating_temp[0]
-	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating)
+
+
+	args = (session['inputUsername'], )
+	cur.callproc('get_email_from_username', args)
+
+	articleId=session['inputArticle_id']
+	print(articleId)
+	cur.execute("SELECT Contributor_email from ArticlePage where Article_id= %s;",[articleId])
+	query_val=cur.fetchone();
+	ArticleAuthor=query_val[0]
+	check=0;
+	if (inputEmail==ArticleAuthor):
+		check=1
+	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating,check=check, myprofile_guest = myprofile_guest)
+
 
 @app.route("/myArticleFilter.html",methods=['GET','POST'])
 def myArticleFilter():
