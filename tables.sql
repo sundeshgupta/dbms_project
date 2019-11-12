@@ -17,7 +17,7 @@ CREATE TABLE PhoneNoDetails
 CREATE TABLE Login
 (
 	Email VARCHAR(50),
-	Password VARCHAR(25),
+	Password VARCHAR(255),
 	Username VARCHAR(25),
 	PRIMARY KEY (Email, Password, Username),
 	FOREIGN KEY (Email) REFERENCES User(Email)

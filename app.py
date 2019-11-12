@@ -6,6 +6,7 @@ from io import BytesIO
 import numpy as np
 import mysql.connector
 import traceback
+from hashlib import md5
 PEOPLE_FOLDER='/home/sundesh/Desktop/dbms_project/'
 GUEST = "guest12345678910"
 app = Flask(__name__)
@@ -49,7 +50,7 @@ def login():
 			if cur.fetchone()[0]:
 				cur.execute("SELECT Password FROM Login WHERE Username = %s;", [username_form]) # FETCH THE HASHED PASSWORD
 				for row in cur.fetchall():
-					if password_form == row[0]:
+					if md5(password_form.encode()).hexdigest() == row[0]:
 						session['inputUsername'] = request.form['inputUsername']
 						return redirect(url_for('main'))
 					else:
@@ -115,11 +116,12 @@ def signup():
 			if phonenumber1_form==phonenumber2_form:
 				error.append("Phone numbers are same.")
 				flag = 1
-
 		if not flag:
 			permission = int(0)
-			if (session['inputUsername']=="admin"):
-				permission = 1
+			if 'inputUsername' in session:
+				if session['inputUsername']=="admin":
+					check = 1
+			password_form = (md5(password_form.encode()).hexdigest())
 			cur.execute("INSERT INTO User VALUES (%s,%s,%s)", [email_form, name_form, permission])
 			cur.execute("INSERT INTO Login VALUES (%s, %s, %s)", [email_form, password_form, username_form])
 
@@ -130,8 +132,9 @@ def signup():
 
 			success = "Signup successfull. Please go to login page."
 	check = None
-	if session['inputUsername']=="admin":
-		check = 1
+	if 'inputUsername' in session:
+		if session['inputUsername']=="admin":
+			check = 1
 	mydb.commit()
 	return render_template('signup.html', error=error, success=success, admin = check)
 
