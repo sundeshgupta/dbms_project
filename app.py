@@ -178,7 +178,6 @@ def filterTag():
 
 	return render_template('TagFilter.html',data=data,tagsizezero = "This feature is not available for guest user!")
 
-
 @app.route("/addArticle.html", methods = ['GET', 'POST'])
 def addArticle():
 	if (session['inputUsername'])==GUEST:
@@ -252,6 +251,10 @@ def viewArticle():
 	data = None
 	articleComments = None
 	rating = int(0)
+	inputEmail = None
+	myprofile_guest = "This feature is available for non guest user!"
+	if session['inputUsername']==GUEST:
+		myprofile_guest = None
 	if request.method == 'POST':
 		try:
 			inputArticle_id = request.form['inputArticleTitle']
@@ -300,13 +303,81 @@ def viewArticle():
 			# print(request.form['inputRating'])
 			print("inputRating not defined")
 
+		try:
+			print(1000)
+			print(request.form['DeleteArticle'])
+			if request.form['DeleteArticle']=='test':
+				cur.execute("DELETE FROM ArticlePage where Article_id= %s;",[session['inputArticle_id']])
+				mydb.commit()
+				print("redirecting.....")
+				return redirect(url_for('myArticleFilter'))
+		except:
+			print("Deletion not possible")
+
 	query="SELECT SUM(Weight) from Rating where Article_id=%s;"
 	cur.execute(query,[inputArticle_id])
 	rating_temp=cur.fetchone()
-
 	if (rating_temp!=None):
 		rating = rating_temp[0]
-	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating)
+
+
+	args = (session['inputUsername'], )
+	cur.callproc('get_email_from_username', args)
+
+	articleId=session['inputArticle_id']
+	print(articleId)
+	cur.execute("SELECT Contributor_email from ArticlePage where Article_id= %s;",[articleId])
+	query_val=cur.fetchone();
+	print(data)
+	ArticleAuthor=query_val[0]
+	check=0;
+	if (inputEmail==ArticleAuthor):
+		check=1
+	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating,check=check, myprofile_guest = myprofile_guest)
+
+@app.route("/viewArticle/addComment.html", methods = ['GET', 'POST'])
+def addComment():
+	if (session['inputUsername'])==GUEST:
+		pass
+
+	if request.method=='POST':
+		inputDescription = request.form['inputDescription']
+
+		args = (session['inputUsername'], )
+		cur.callproc('get_email_from_username', args)
+		for res in cur.stored_results():
+			inputEmail = res.fetchall()
+		inputEmail = inputEmail[0][0]
+
+		cur.execute("INSERT INTO Comment(Contributor_email, Description) VALUES (%s, %s);", [inputEmail, inputDescription])
+		mydb.commit()
+
+		return redirect(url_for('viewArticle'))
+
+@app.route("/viewArticle/replyComment.html", methods = ['GET', 'POST'])
+def replyComment():
+	if (session['inputUsername'])==GUEST:
+		pass
+
+	if request.method=='POST':
+		inputDescription = request.form['inputDescription']
+		inputCommentFor_id = request.form['inputCommentFor']
+		args = (session['inputUsername'], )
+		cur.callproc('get_email_from_username', args)
+		for res in cur.stored_results():
+			inputEmail = res.fetchall()
+		inputEmail = inputEmail[0][0]
+
+		cur.execute("INSERT INTO Comment(Contributor_email, Description) VALUES (%s, %s);", [inputEmail, inputDescription])
+		cur.callproc('get_max_comment_id')
+
+		for res in cur.stored_results():
+			inputComment_id = res.fetchall()
+		cur.execute("INSERT INTO CommentFor VALUES (%s, %s);", [inputComment_id, inputCommentFor_id])
+		mydb.commit()
+
+		return redirect(url_for('viewArticle'))
+
 
 @app.route("/myArticleFilter.html",methods=['GET','POST'])
 def myArticleFilter():
