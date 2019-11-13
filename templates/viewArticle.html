@@ -23,6 +23,7 @@
           <hr size=2>
         </div>
         </div>
+        <p>{{articleTitle}}</p>
             <pre><code data-language = "c">{% if data %}{{data}}{% else %}
                 Error Reading Data from File!
                 {%endif%}
@@ -43,8 +44,8 @@
             <a href="{{ url_for('EditArticle') }}">&nbsp&nbsp&nbspEdit Article&nbsp&nbsp&nbsp</a>
             </div>
         {% endif %}
-        {% if myprofile_guest %}
         </div>
+        {% if myprofile_guest %}
         <form class="" action="{{url_for('viewArticle')}}" method="post">
             <!-- <button type="button" id="CommentButton" onclick="showBox()">Add Comment</button> -->
             <input type="text" name="inputDescription" id="AddDescription" placeholder="Add Comment" ><button type="submit" name="btn" value="Add Comment" id="AddComment" >Submit Comment</button>

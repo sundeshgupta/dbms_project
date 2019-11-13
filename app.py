@@ -416,8 +416,11 @@ def viewArticle():
 
 	articleId=session['inputArticle_id']
 	print(articleId)
+	cur.execute("Select Title from ArticlePage where Article_id= %s ;",[articleId]);
+	Titledata=cur.fetchone();
+	articleTitle=Titledata[0]
 	cur.execute("SELECT Contributor_email from ArticlePage where Article_id= %s;",[articleId])
-	query_val=cur.fetchone();
+	query_val=cur.fetchone()
 	ArticleAuthor=query_val[0]
 	check=0;
 	if (inputEmail==ArticleAuthor):
@@ -426,7 +429,7 @@ def viewArticle():
 	print(inputEmail)
 	if (inputEmail in teachers):
 		check = 1
-	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating,check=check, myprofile_guest = myprofile_guest)
+	return render_template('viewArticle.html', data = data, comments = articleComments,articleTitle=articleTitle,rating = rating,check=check, myprofile_guest = myprofile_guest)
 
 @app.route("/EditArticle.html",methods=['GET','POST'])
 def EditArticle():

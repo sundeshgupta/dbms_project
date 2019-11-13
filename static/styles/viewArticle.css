@@ -75,7 +75,10 @@ button[type=submit]:hover{
   cursor:pointer;
   
 }
-
+p{
+  text-align:center;
+  font-size:140%;
+}
 .editArticle a{
   width: 170px;
   height: 25px;
