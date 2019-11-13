@@ -90,11 +90,17 @@ input[type=submit]:hover{
   opacity:1;
   
 }
-.subheader {
-  text-align:right;
-}
 .subheader a{
-  color:#000000;
+  color:#000;
+}
+.subheader{
+ display:inline;
+}
+.leftalign{
+  float:left;
+}
+.rightalign{
+  float:right;
 }
 .wrapper {
   margin:auto;

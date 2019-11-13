@@ -8,12 +8,18 @@
         <div class="header">
         <h1 align="center">IITI Code Management</h1>
         <div class="subheader">
+           <div class = "leftalign">
+                <a href=" {{ url_for('getHomepage') }}" >Home</a>
+            </div>
+            <div class = "rightalign">
             {% if admin %}
                 <a href="{{url_for('signup')}}">Add Teacher |</a>
             {% endif %}
-          <a href="{{url_for('addArticle')}}">Add Article |</a>
-          <a href="{{url_for('myprofile')}}">My Profile |</a>
-          <a href="{{ url_for('logout') }}"> Logout</a>
+                <a href="{{url_for('addArticle')}}">Add Article |</a>
+                <a href="{{url_for('myprofile')}}">My Profile |</a>
+                <a href="{{ url_for('logout') }}"> Logout</a>
+            </div>
+            <br>
           <hr size=2>
         </div>
         </div>
@@ -70,36 +76,37 @@
                     <li><b>{{ item.text }}</b> <font color="blue"><i><u>{{item.contributor}}</u></i></font> <i>{{item.date}}<i></li>
                     {% if myprofile_guest %}
                         <form class="" action="{{url_for('viewArticle')}}" method="post">
-                           <!--  <button type="button" id="ReplyButton" onclick="showBox()">Add Reply</button> -->
-                            <input type="text" name="inputCommentFor" value="{{item.id}}" hidden>
-                            <input type="text" name="inputDescriptionReply" placeholder="Add Reply" id="AddDescriptionReply"><button type="submit" name="btn" value="Add Reply" id="AddReply">Submit Reply</button>
+                            <!-- <button type="button" id="ReplyButton" onclick="showBox()">Add Reply</button> -->
+                            <input type="text" name="inputCommentFor" value="{{item.id}}" id = "getID" hidden>
+                            <input type="text" name="inputDescriptionReply" placeholder="Add Reply" id="AddDescriptionReply{{item.id}}"><button type="submit" name="btn" value="Add Reply" id="AddReply{{item.id}}">Submit Reply</button>
 
-                            <script type="text/javascript">
+                            <!-- <script type="text/javascript">
                             function showBox(){
-                                // var x = document.getElementById("AddReply");
-                                //   if (x.style.display === "none") {
-                                //     x.style.display = "block";
-                                //   } else {
-                                //     x.style.display = "none";
-                                //   }
-                                //   x = document.getElementById("AddDescriptionReply");
-                                //   if (x.style.display === "none") {
-                                //     x.style.display = "block";
-                                //   } else {
-                                //     x.style.display = "none";
-                                //   }
+                                var a = document.getElementById("getID").value;
+                                alert(a)
+                                var x = document.getElementById("AddReply".concat(a));
+                                  if (x.style.display === "none") {
+                                    x.style.display = "block";
+                                  } else {
+                                    x.style.display = "none";
+                                  }
+                                  x = document.getElementById("AddDescriptionReply".contact(a));
+                                  if (x.style.display === "none") {
+                                    x.style.display = "block";
+                                  } else {
+                                    x.style.display = "none";
+                                  }
 
                             }
-                            </script>
+                            </script> -->
                         </form>
                     {% endif %}
                     {%- if item.children -%}
-                        <ul class="children">{{ loop(item.children) }}</ul>
+                        <ul class="children" type = "disc">{{ loop(item.children) }}</ul>
                     {%- endif %}
                 {%- endfor %}
             {% endif %}
         {% endif %}
-         <a href="{{url_for('getHomepage')}}">Back</a>
 
         <script type="text/javascript" src="{{url_for('static', filename = 'script/jquery-3.4.1.js')}}">
         </script>

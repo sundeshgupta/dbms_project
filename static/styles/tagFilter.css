@@ -90,8 +90,14 @@ button[type=submit]:hover{
   opacity:1;
   
 }
-.subheader {
-  text-align:right;
+.subheader{
+ display:inline;
+}
+.leftalign{
+  float:left;
+}
+.rightalign{
+  float:right;
 }
 .subheader a{
   color:#000000;

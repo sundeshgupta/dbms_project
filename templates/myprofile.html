@@ -10,10 +10,10 @@
     <div class="header">
         <h1 align="center">IITI Code Management</h1>
         <div class="subheader">
-            <div class = "alignleft">
+            <div class = "leftalign">
                 <a href=" {{ url_for('getHomepage') }}" >Home</a>
             </div>
-            <div class = "alignright">
+            <div class = "rightalign">
             {% if admin %}
                 <a href="{{url_for('signup')}}">Add Teacher |</a>
             {% endif %}
@@ -21,6 +21,7 @@
                 <a href="{{url_for('myprofile')}}">My Profile |</a>
                 <a href="{{ url_for('logout') }}"> Logout</a>
             </div>
+            <br>
           <hr size=2>
     </div>
     </div>

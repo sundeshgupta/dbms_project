@@ -32,6 +32,7 @@ signed main(){
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
+hello mother fucker
     queue<int>q;
     int w;
     cout<<"Enter the node from where you want the bfs operation to begin"<<endl;
@@ -56,4 +57,5 @@ signed main(){
 	
 return 0;
 }
+
 

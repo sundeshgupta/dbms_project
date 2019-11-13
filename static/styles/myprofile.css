@@ -83,11 +83,9 @@ input[type=submit]:hover{
 }
 .leftalign{
   float:left;
-  display:inline;
 }
 .rightalign{
   float:right;
-  display:inline;
 }
 .subheader a{
   color:#000000;

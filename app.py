@@ -120,7 +120,8 @@ def signup():
 			permission = int(0)
 			if 'inputUsername' in session:
 				if session['inputUsername']=="admin":
-					check = 1
+					permission = 1
+			print(permission)
 			password_form = (md5(password_form.encode()).hexdigest())
 			cur.execute("INSERT INTO User VALUES (%s,%s,%s)", [email_form, name_form, permission])
 			cur.execute("INSERT INTO Login VALUES (%s, %s, %s)", [email_form, password_form, username_form])
@@ -292,7 +293,9 @@ def getTeachers():
 	result = []
 	for teacher in teachers:
 		result.append(teacher[0])
+	print(result)
 	return result
+
 
 @app.route("/viewArticle.html",methods=['GET','POST'])
 def viewArticle():
@@ -420,6 +423,7 @@ def viewArticle():
 	if (inputEmail==ArticleAuthor):
 		check=1
 	teachers=getTeachers()
+	print(inputEmail)
 	if (inputEmail in teachers):
 		check = 1
 	return render_template('viewArticle.html', data = data, comments = articleComments, rating = rating,check=check, myprofile_guest = myprofile_guest)
