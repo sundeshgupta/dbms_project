@@ -1,4 +1,4 @@
-# dbms_project
+# IITI Code Management
 
 The Project Uses:
 1. MySql (8.0.18)
