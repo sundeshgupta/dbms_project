@@ -7,9 +7,9 @@ The Project Uses:
 4. CSS
 5. Javascript
 
-How to Run the Project:
+#How to Run the Project:
+
 Step 1. Making the database.
 Import Tables.sql and Tables_data.sql in database "dbms_project" and grant permission to user aniket.
 
-Step 2.
-Run app.py
+Step 2. Run app.py
