@@ -1,9 +1,0 @@
-def type():
-    sajdlf
-    print("he")
-    return "fds"
-
-
-
-
-
